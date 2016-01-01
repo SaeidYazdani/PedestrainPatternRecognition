@@ -2,36 +2,65 @@
 #define MANAGER_H
 
 #include <QObject>
+#include <QtQml>
 #include <QUrl>
+
+#include "trainer.h"
+#include "training_type.h"
 
 class Manager : public QObject
 {
     Q_OBJECT
 
-    Q_ENUMS(WorkState)
-
 public:
     explicit Manager(QObject *parent = 0);
-    enum WorkState {IDLE, WORKING, DONE};
 
-    WorkState state() const {return mState;}
+
+    PedRecog::WorkState state() const {return mState;}
+
+    int numberOfImagesToTrain() const;
+
+    PedRecog::TrainingFilters filters() const;
+    PedRecog::TrainingMethod method() const;
+
+    QString convertToFilePath(QUrl url, QString name);
 
 signals:
 
 
 public slots:
-    void start(QString posPath, QString negPath, QString outputPath, int numToTrain);
+    bool start();
     void stop();
-    bool checkDataFolder(QUrl posPath);
+    bool checkDataFolder(QUrl posPath, int whichFolder);
     bool checkOutputFolder(QUrl outPath);
+    void setNumberOfImagesToTrain(QString num);
+    void setMethod(int method);
+    void setFilters(int filters);
 
 
 private:
-    WorkState mState;
+
+    //manager sate
+    PedRecog::WorkState mState;
+
+    //folders, files, lists
     QUrl    mPositiveDataPath;
     QUrl    mNegativeDataPath;
     QUrl    mOutputPath;
-    int     mNumberToTrain;
+    QStringList mPositiveFilesList;
+    QStringList mNegativeFilesList;
+
+    //options
+    PedRecog::TrainingFilters mFilters;
+    PedRecog::TrainingMethod mMethod;
+    int mNumberOfImagesToTrain;
+
+
+
+    //functions
+
+
+    QStringList generateFileList(PedRecog::TrainingType t);
 };
 
 #endif // MANAGER_H

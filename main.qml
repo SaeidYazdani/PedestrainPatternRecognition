@@ -2,36 +2,49 @@ import QtQuick 2.5
 import QtQuick.Window 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.2
 
 Window {
     title: qsTr("Pedestrain Pattern Recognition")
 
     visible: true
-    width: 640;
-    height: 480;
+    width: 800;
+    height: 600;
 
+
+    property int pathRectsHeight: 50
+    property int margin: 10;
 
     property url pathPos : "";
     property url pathNeg : "";
     property url pathOut : "";
-    property int    numTrain : 0;
+    property int numTrain : 0;
 
 
     MainForm {
         id: mainForm;
 
+        //check starting conditions
+        function validateInputs() {
+            if(rectPos.isValid && rectNeg.isValid && rectOut.isValid) {
+                rectStart.validated(true);
+            } else {
+                rectStart.validated(false);
+            }
+        }
+
         //for positive data path and info
         Rectangle {
-            id:     rectPos;
+            id: rectPos;
 
-            x:  parent.x + 5;
-            y: parent.y + 5;
-            width: parent.width - 10;
-            height: (parent.height / 5) - 10;
+            x: parent.x + (margin / 2);
+            y: parent.y + (margin / 2);
+            width: parent.width - margin;
+            height: pathRectsHeight - margin;
             color: "red";
 
             property bool isValid: false;
-            signal folderSelected
+            signal folderSelected;
 
             onFolderSelected:  {
                 if(isValid) {
@@ -39,11 +52,14 @@ Window {
                 } else {
                     rectPos.color = "red";
                 }
+
+                mainForm.validateInputs();
             }
 
             Button {
                 id:buttonPosPath;
                 anchors.centerIn: parent;
+                width: parent.width / 2;
                 text: qsTr("Select POSITIVE folder");
 
                 onClicked: {
@@ -56,10 +72,10 @@ Window {
         Rectangle {
             id: rectNeg;
 
-            x: rectPos.x;
-            y: rectPos.height + 10;
-            width: parent.width - 10;
-            height: (parent.height / 5) - 10;
+            x: parent.x + (margin / 2);
+            y: parent.y + rectPos.height + margin;
+            width: parent.width - margin;
+            height: pathRectsHeight - margin;
             color: "red";
 
             property bool isValid: false;
@@ -71,13 +87,15 @@ Window {
                 } else {
                     rectNeg.color = "red";
                 }
+
+                mainForm.validateInputs();
             }
 
             Button {
                 id:buttonNegPath;
                 anchors.centerIn: parent;
+                width: parent.width / 2;
                 text: qsTr("Select NEGATIVE folder");
-
                 onClicked: {
                     dialogNegPath.open();
                 }
@@ -89,9 +107,9 @@ Window {
             id: rectOut;
 
             x: rectNeg.x;
-            y: rectPos.height  + rectNeg.height + 15;
-            width: parent.width - 10;
-            height: (parent.height / 5) - 10;
+            y: rectPos.height  + rectNeg.height + margin + margin / 2;
+            width: parent.width - margin;
+            height: pathRectsHeight - margin;
             color: "red";
 
             property bool isValid: false;
@@ -103,11 +121,14 @@ Window {
                 } else {
                     rectOut.color = "red";
                 }
+
+                mainForm.validateInputs();
             }
 
             Button {
                 id:buttonOutPath;
                 anchors.centerIn: parent;
+                width: parent.width / 2;
                 text: qsTr("Select OUTPUT folder");
 
                 onClicked: {
@@ -117,30 +138,191 @@ Window {
         }
 
         Rectangle {
-            id: rectMsg;
-            x: rectPos.x
-            y: rectOut.y + rectOut.height + 10;
-            height: mainForm.height - y - 10;
-            width: parent.width - 10;
-            color: "black"
+            id: rectOptions;
+            x: rectOut.x;
+            y: rectOut.y + rectOut.height + margin;
+            width: mainForm.width - margin;
+            height: (mainForm.height / 4) - margin;
+            color: "#600000FF";
 
-            ScrollView {
-                width: parent.width - 10;
-                height: parent.height - 10;
+            /** BEGIN TEST  **/
 
-                TextEdit {
-                    id: txtMsg;
-                    readOnly: true;
-                    anchors.fill: parent;
-                    color: "green";
+            RowLayout {
+                id: mainLayout
+                width: parent.width;
+                height: parent.height;
+
+                GroupBox {
+                    id: gbTrainingOptions
+                    title: "Training Options"
+                    width: parent.width / 2;
+                    height: parent.height
+
+
+                    GridLayout {
+                        id: gridLayout
+                        rows: 3
+                        columns: 3;
+                        flow: GridLayout.TopToBottom
+                        width: parent.width;
+                        height: parent.height;
+
+                        Label { text: "#Images to train" }
+                        Label { text: "Training Method" }
+                        Label { text: "Pre Filtering" }
+
+                        TextField {
+                            id: tfNumToTrain
+                            anchors.right:  parent.right;
+                            inputMask: "09999"
+                            maximumLength: 5;
+                            text: qsTr("50");
+                        }
+
+                        ComboBox {
+                            id: coboType
+                            anchors {
+                                left: tfNumToTrain.left;
+                                right: tfNumToTrain.right
+                            }
+
+                            model: ["BAYESIAN", "HAG", "EXTRA"];
+                        }
+
+                        Row {
+                            spacing: 5;
+
+                            CheckBox {
+                                id: cbGauss
+                                text: "GAUSS"
+                                checked: false;
+                            }
+
+                            CheckBox {
+                                id: cbSobel
+                                text: "SOBEL"
+                                checked: false;
+                            }
+
+                            CheckBox {
+                                id: cbFeat
+                                text: "FEATURE"
+                                checked: false;
+                            }
+
+                        }
+                    }
+                }
+
+                GroupBox {
+                    id: gbOutputOptions;
+                    title: "Output Options";
+                    width: parent.width / 2;
+                    height: parent.height;
+
+                    Column {
+                        id: rowLayout
+                        height: parent.height;
+                        width: parent.width;
+
+                        Row {
+                            id: rowOutputFile
+                            width:parent.width;
+                            height: parent.height / 2;
+                            spacing: 5;
+
+
+                            Label {
+                                text: "File name";
+                            }
+
+                            TextField {
+
+                                id: tfFileName
+                                validator: RegExpValidator {
+                                    regExp: /^[-\w^&'@{}[\],$=!#().%+~ ]+$/
+                                }
+                                maximumLength: 128;
+                                text: qsTr("default.arff");
+                            }
+                        }
+
+                        Rectangle {
+                            id: rectStart
+                            color:"red"
+                            width: parent.width - 35;
+                            height: parent.height / 2;
+
+                            property bool lastResult: false;
+
+                            signal validated(bool result);
+
+                            onValidated: {
+                                if(result) {
+                                    buttonStart.enabled = true;
+                                    rectStart.color = "green";
+                                    textArea.append("Program can be started now!");
+                                    lastResult = true;
+                                } else {
+                                    buttonStart.enabled = false;
+                                    rectStart.color = "red";
+                                    if(lastResult) {
+                                        textArea.append("Please solve the problems!");
+                                    }
+                                }
+                            }
+
+                            Button {
+                                anchors.centerIn: parent;
+                                id: buttonStart
+                                text: qsTr("START")
+                                enabled: false;
+
+                                onClicked: {
+                                    var a, b,c;
+                                    cbGauss.checked ? a = 1 : a = 0;
+                                    cbSobel.checked ? b = 2 : b = 0;
+                                    cbFeat.checked ? c = 4 : c = 0;
+
+                                    cpManager.setFilters(a | b | c);
+
+                                    cpManager.setNumberOfImagesToTrain(tfNumToTrain.text);
+                                    cpManager.start();
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
+
+
+            /** END TEST    **/
         }
 
+        Rectangle {
+            id: rectMsg;
+            x: rectPos.x
+            y: rectOptions.y + rectOptions.height + margin;
 
+            height: mainForm.height - (rectPos.height + rectNeg.height + rectOut.height + rectOptions.height) - margin * 4;
+            width: parent.width - 10;
+            color: "blue"
 
+            TextArea {
+                id: textArea;
+                anchors.fill: parent;
+                readOnly: true;
+
+                function append(msg) {
+                    text += msg + "\n";
+                }
+            }
+
+        }
 
         //TODO all these dialogs can be only one,,,but I am lazy
+        //TODO move dialogs, functions and ... to a separate qml file
 
         //dialog for positive data folder
         FileDialog {
@@ -150,27 +332,27 @@ Window {
             folder: shortcuts.home;
 
             onAccepted: {
-                txtMsg.append("Selecting POSITIVE data folder");
+                textArea.append("Selecting POSITIVE data folder");
                 pathPos = dialogPosPath.folder;
                 var msg;
-                var result = cpManager.checkDataFolder(pathPos);
+                var result = cpManager.checkDataFolder(pathPos, 0);
 
                 switch(result) {
                 case true:
                     msg = "\tFolder exist and contains 'pgm' files";
+                    textArea.append(msg);
                     rectPos.isValid = true;
                     rectPos.folderSelected();
                     break;
 
                 case false:
-                    msg = "\tFodler does not exist or does not contain"
+                    msg = "\Folder does not exist or does not contain"
                             + " 'pgm' files";
+                    textArea.append(msg);
                     rectPos.isValid = false;
                     rectPos.folderSelected();
                     break;
                 }
-
-                txtMsg.append(msg);
             }
         }
 
@@ -182,14 +364,15 @@ Window {
             folder: shortcuts.home;
 
             onAccepted: {
-                txtMsg.append("Selecting NEGATIVE data folder");
+                textArea.append("Selecting NEGATIVE data folder");
                 pathNeg = dialogNegPath.folder;
                 var msg;
-                var result = cpManager.checkDataFolder(pathNeg);
+                var result = cpManager.checkDataFolder(pathNeg, 1);
 
                 switch(result) {
                 case true:
                     msg = "\tFolder exist and contains 'pgm' files";
+                    textArea.append(msg);
                     rectNeg.isValid = true;
                     rectNeg.folderSelected();
                     break;
@@ -197,12 +380,11 @@ Window {
                 case false:
                     msg = "\tFodler does not exist or does not contain"
                             + " 'pgm' files";
+                    textArea.append(msg);
                     rectNeg.isValid = false;
                     rectNeg.folderSelected();
                     break;
                 }
-
-                txtMsg.append(msg);
             }
         }
 
@@ -214,7 +396,7 @@ Window {
             folder: shortcuts.home;
 
             onAccepted: {
-                txtMsg.append("Selecting OUTPUT folder");
+                textArea.append("Selecting OUTPUT folder");
                 pathOut = dialogOutPath.folder;
                 var result = cpManager.checkOutputFolder(pathOut);
                 var msg;
@@ -222,18 +404,18 @@ Window {
                 switch(result) {
                 case true:
                     msg = "\tFolder exist and is writable";
+                    textArea.append(msg);
                     rectOut.isValid = true;
                     rectOut.folderSelected();
                     break;
 
                 case false:
                     msg = "\tFodler does not exist or is not writeable";
+                    textArea.append(msg);
                     rectOut.isValid = false;
                     rectOut.folderSelected()
                     break;
                 }
-
-                txtMsg.append(msg);
             }
         }
     }

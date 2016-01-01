@@ -4,20 +4,45 @@
 #include <QObject>
 #include <QDebug>
 #include <QTime>
+#include <QUrl>
+#include <QString>
 
 #include "training_type.h"
+
 
 class Trainer : public QObject
 {
 
 public:
+
     /*  CONSTRUCTORS    */
     explicit Trainer(QObject *parent = 0);
 
-    Trainer(TrainingType type);
+    Trainer(PedRecog::TrainingType type);
 
 
     /*  FUNCTIONS   */
+
+    /**
+     * @brief performTraining
+     * @return
+     */
+    PedRecog::training_vector performTraining();
+
+    /**
+     * @brief getPixelValues goes through pixels and read and store
+     * pixel values in an int array
+     * @param file the file to load
+     * @return pointer to beggining of result int array
+     */
+    PedRecog::pixel_vector getPixelValues(QString file);
+
+    /**
+     * @brief showSingleImage
+     * @param file
+     */
+    void showSingleImage(QString file);
+
 
     //SETTERS
 
@@ -25,69 +50,42 @@ public:
      * @brief setTrainerType
      * @param trainerType
      */
-    void setTrainerType(TrainingType trainerType);
+    void setTrainerType(PedRecog::TrainingType trainerType);
 
     /**
-     * @brief setImagePath
-     * @param path
+     * @brief Set the pre-filters that should be done
+     * @param gauss
+     * @param sobel
+     * @param feature
      */
-    void setImagePath(QString path);
+    void setFilters(bool gauss, bool sobel, bool feature);
 
-    /**
-     * @brief setNumberOfImageToTrain
-     * @param num
-     */
-    void setNumberOfImageToTrain(int num);
-
-    /**
-     * @brief setOuputPath
-     * @param path
-     */
-    void setOuputPath(QString path);
-
-    /**
-     * @brief performTraining
-     * @return true if job is done, false if something went wrong
-     */
-    bool performTraining();
 
     //GETTERS
-
-    /**
-     * @brief imagesPath
-     * @return
-     */
-    QString imagesPath() const;
-
-    /**
-     * @brief outputPath
-     * @return
-     */
-    QString outputPath() const;
-
-    /**
-     * @brief numberOfImagesToTrain
-     * @return
-     */
-    int numberOfImagesToTrain() const;
 
     /**
      * @brief trainerType
      * @return
      */
-    TrainingType trainerType();
+    PedRecog::TrainingType trainerType();
 
+
+    QStringList *fileList() const;
+    void setFileList(QStringList *fileList);
+
+    int getNumToTrain() const;
+    void setNumToTrain(int numToTrain);
 
 private:
     /*  MEMBERS */
-    TrainingType mTrainerType;
-    QString mImagesPath;
-    QString mOutputPath;
-    int     mNumberOfImagesToTrain;
+    PedRecog::TrainingType mTrainerType;
+    QStringList *mFileList;
+
+    int mNumToTrain;
+    bool mFilterGauss, mFilterSobel, mFilterFeature;
+
 
     /*  FUNCTIONS   */
-
-
 };
 
 #endif // TRAINER_H
