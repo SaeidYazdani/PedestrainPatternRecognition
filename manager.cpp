@@ -15,30 +15,30 @@ bool Manager::start()
     //PROCESSING IS DONE HERE
 
     qDebug() << "Starting the training session!";
-    mState = PedRecog::WORKING;
+    mState = PedRec::WORKING;
 
     //Prepareing filters from enum flag
     bool a,b,c;
 
-    if(mFilters & PedRecog::GAUSS)
+    if(mFilters & PedRec::GAUSS)
         a = true;
-    if(mFilters & PedRecog::SOBEL)
+    if(mFilters & PedRec::SOBEL)
         b = true;
-    if(mFilters & PedRecog::FEATURE)
+    if(mFilters & PedRec::FEATURE)
         c = true;
 
 
     //Preparing positive trainer
-    Trainer trainerPositive(PedRecog::POSITIVE);
-    mPositiveFilesList = generateFileList(PedRecog::POSITIVE);
+    Trainer trainerPositive(PedRec::POSITIVE);
+    mPositiveFilesList = generateFileList(PedRec::POSITIVE);
     trainerPositive.setFileList(&mPositiveFilesList);
     trainerPositive.setFilters(a, b, c);
     trainerPositive.setNumToTrain(mNumberOfImagesToTrain);
 
 
     //Preparing negative trainer
-    Trainer trainerNegative(PedRecog::NEGATIVE);
-    mNegativeFilesList = generateFileList(PedRecog::NEGATIVE);
+    Trainer trainerNegative(PedRec::NEGATIVE);
+    mNegativeFilesList = generateFileList(PedRec::NEGATIVE);
     trainerNegative.setFileList(&mNegativeFilesList);
     trainerNegative.setFilters(a, b, c);
     trainerPositive.setNumToTrain(mNumberOfImagesToTrain);
@@ -46,13 +46,13 @@ bool Manager::start()
 
     //Start work
     //TODO do this on 2 thread
-    PedRecog::training_vector posResult = trainerPositive.performTraining();
-    PedRecog::training_vector negResult = trainerNegative.performTraining();
+    PedRec::training_vector posResult = trainerPositive.performTraining();
+    PedRec::training_vector negResult = trainerNegative.performTraining();
 
     //TODO now save to ARFF file ;)
 
 
-    mState = PedRecog::IDLE;
+    mState = PedRec::IDLE;
 
     return true;
 }
@@ -61,11 +61,11 @@ bool Manager::start()
 void Manager::stop()
 {
     switch (mState) {
-    case PedRecog::IDLE:
+    case PedRec::IDLE:
         //do nothing
         break;
 
-    case PedRecog::WORKING:
+    case PedRec::WORKING:
         //TODO stop the work if requested by user
         break;
 
@@ -157,7 +157,7 @@ void Manager::setNumberOfImagesToTrain(QString num)
 
 void Manager::setMethod(int method)
 {
-    mMethod = static_cast<PedRecog::TrainingMethod>(method);
+    mMethod = static_cast<PedRec::TrainingMethod>(method);
 }
 
 void Manager::setFilters(int filters)
@@ -168,11 +168,11 @@ void Manager::setFilters(int filters)
     if(filters == 0) {
         what.append(" NONE");
     } else { //this is a trick to see the flag
-        if(filters & PedRecog::GAUSS) //e.g. 0 AND 1 or OTHERS & 1
+        if(filters & PedRec::GAUSS) //e.g. 0 AND 1 or OTHERS & 1
             what.append(" GAUSS");
-        if(filters & PedRecog::SOBEL)
+        if(filters & PedRec::SOBEL)
             what.append(" SOBEL");
-        if(filters & PedRecog::FEATURE)
+        if(filters & PedRec::FEATURE)
             what.append(" FEATURE");
     }
 
@@ -180,31 +180,66 @@ void Manager::setFilters(int filters)
     if(filters < 0 || filters > 8) {
         qDebug() << "Invalid FILTERS enum received!"
                  << "NO filter will be used!";
-        mFilters = PedRecog::NONE;
+        mFilters = PedRec::NONE;
         return;
     }
 
     qDebug() << what;
 
     //set the class member, the cast is necessary from int to enum
-    mFilters = static_cast<PedRecog::TrainingFilters>(filters);
+    mFilters = static_cast<PedRec::TrainingFilters>(filters);
 }
 
-QStringList Manager::generateFileList(PedRecog::TrainingType t)
+void Manager::setSizeMode(int mode)
+{
+    switch (mode) {
+    case 0:
+        mSizeMode = PedRec::RESIZE;
+        qDebug() << "Setting SizeMode to RESIZE";
+        break;
+
+    case 1:
+        mSizeMode = PedRec::WINDOW;
+        qDebug() << "Setting SizeMode to WINDOW";
+        break;
+
+    default:
+        qDebug() << "Invalid enum value for SizeMode! setting it to RESIZE";
+        break;
+    }
+}
+
+void Manager::setOutputFileName(QString name)
+{
+    mOutputFileName = name;
+}
+
+
+QString Manager::outputFileName() const
+{
+    return mOutputFileName;
+}
+
+PedRec::SizeMode Manager::sizeMode() const
+{
+    return mSizeMode;
+}
+
+QStringList Manager::generateFileList(PedRec::TrainingType t)
 {
     qDebug() << "Generating list of files for"
-             << (t == PedRecog::POSITIVE ? " POSITIVE "
+             << (t == PedRec::POSITIVE ? " POSITIVE "
                                         : " NEGATIVE ")
              << " data";
 
     //set source based on type
     QStringList src;
-    t == PedRecog::POSITIVE
+    t == PedRec::POSITIVE
             ? src = mPositiveFilesList : src = mNegativeFilesList;
 
     //set dir baed on type
     QString dir;
-    t == PedRecog::POSITIVE
+    t == PedRec::POSITIVE
             ? dir = mPositiveDataPath.toLocalFile()
             : dir = mNegativeDataPath.toLocalFile();
 
@@ -220,12 +255,12 @@ QStringList Manager::generateFileList(PedRecog::TrainingType t)
     return dest;
 }
 
-PedRecog::TrainingMethod Manager::method() const
+PedRec::TrainingMethod Manager::method() const
 {
     return mMethod;
 }
 
-PedRecog::TrainingFilters Manager::filters() const
+PedRec::TrainingFilters Manager::filters() const
 {
     return mFilters;
 }

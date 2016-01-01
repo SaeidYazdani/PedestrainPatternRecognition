@@ -48,6 +48,17 @@ Window {
 
             onFolderSelected:  {
                 if(isValid) {
+
+                    //check if pos and neg paths are not the same!
+                    if(pathPos === pathNeg) {
+                        textArea.append("POSITIVE folder can not be"
+                                        +" the same as NEGATIVE folder!");
+
+                            //invalid again
+                            isValid = false;
+                            return;
+                    }
+
                     rectPos.color = "green";
                 } else {
                     rectPos.color = "red";
@@ -83,6 +94,15 @@ Window {
 
             onFolderSelected:  {
                 if(isValid) {
+                    //check if pos and neg paths are not the same!
+                    if(pathPos === pathNeg) {
+                        textArea.append("NEGATIVE folder can not be"
+                                        +" the same as POSITIVE folder!");
+
+                            //invalid again
+                            isValid = false;
+                            return;
+                    }
                     rectNeg.color = "green";
                 } else {
                     rectNeg.color = "red";
@@ -161,8 +181,8 @@ Window {
 
                     GridLayout {
                         id: gridLayout
-                        rows: 3
-                        columns: 3;
+                        rows: 4
+                        columns: 2;
                         flow: GridLayout.TopToBottom
                         width: parent.width;
                         height: parent.height;
@@ -170,6 +190,7 @@ Window {
                         Label { text: "#Images to train" }
                         Label { text: "Training Method" }
                         Label { text: "Pre Filtering" }
+                        Label { text: "Size Mode" }
 
                         TextField {
                             id: tfNumToTrain
@@ -209,7 +230,16 @@ Window {
                                 text: "FEATURE"
                                 checked: false;
                             }
+                        }
 
+                        ComboBox {
+                            id: coboSizeMode;
+                            anchors {
+                                left: tfNumToTrain.left;
+                                right: tfNumToTrain.right
+                            }
+
+                            model: ["RESIZE","WINDOW"];
                         }
                     }
                 }
@@ -279,15 +309,27 @@ Window {
                                 enabled: false;
 
                                 onClicked: {
+                                    //send filters
                                     var a, b,c;
                                     cbGauss.checked ? a = 1 : a = 0;
                                     cbSobel.checked ? b = 2 : b = 0;
                                     cbFeat.checked ? c = 4 : c = 0;
-
                                     cpManager.setFilters(a | b | c);
 
+                                    //send other options
+                                    cpManager.setSizeMode(coboSizeMode.currentIndex);
+                                    cpManager.setOutputFileName(tfFileName.text);
                                     cpManager.setNumberOfImagesToTrain(tfNumToTrain.text);
-                                    cpManager.start();
+
+                                    var startTime = new Date().getTime();
+                                    var result = cpManager.start();
+
+                                    if(result) {
+                                    textArea.append("Training is done. Time "
+                                                    + (new Date().getTime()
+                                                       - startTime)
+                                                    + " ms");
+                                    }
                                 }
                             }
                         }

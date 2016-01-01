@@ -7,7 +7,7 @@
 #include <QUrl>
 #include <QString>
 
-#include "training_type.h"
+#include "pedrecog_types.h"
 
 
 class Trainer : public QObject
@@ -18,7 +18,7 @@ public:
     /*  CONSTRUCTORS    */
     explicit Trainer(QObject *parent = 0);
 
-    Trainer(PedRecog::TrainingType type);
+    Trainer(PedRec::TrainingType type);
 
 
     /*  FUNCTIONS   */
@@ -27,7 +27,7 @@ public:
      * @brief performTraining
      * @return
      */
-    PedRecog::training_vector performTraining();
+    PedRec::training_vector performTraining();
 
     /**
      * @brief getPixelValues goes through pixels and read and store
@@ -35,7 +35,7 @@ public:
      * @param file the file to load
      * @return pointer to beggining of result int array
      */
-    PedRecog::pixel_vector getPixelValues(QString file);
+    PedRec::pixel_vector getPixelValues(QString file);
 
     /**
      * @brief showSingleImage
@@ -50,7 +50,7 @@ public:
      * @brief setTrainerType
      * @param trainerType
      */
-    void setTrainerType(PedRecog::TrainingType trainerType);
+    void setTrainerType(PedRec::TrainingType trainerType);
 
     /**
      * @brief Set the pre-filters that should be done
@@ -67,7 +67,7 @@ public:
      * @brief trainerType
      * @return
      */
-    PedRecog::TrainingType trainerType();
+    PedRec::TrainingType trainerType();
 
 
     QStringList *fileList() const;
@@ -78,7 +78,7 @@ public:
 
 private:
     /*  MEMBERS */
-    PedRecog::TrainingType mTrainerType;
+    PedRec::TrainingType mTrainerType;
     QStringList *mFileList;
 
     int mNumToTrain;

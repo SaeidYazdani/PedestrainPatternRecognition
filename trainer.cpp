@@ -1,5 +1,5 @@
 #include "trainer.h"
-#include "training_type.h"
+#include "pedrecog_types.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -10,14 +10,14 @@ Trainer::Trainer(QObject *parent) : QObject(parent)
     //for compatibility with Qt Framework
 }
 
-Trainer::Trainer(PedRecog::TrainingType t) : mTrainerType(t)
+Trainer::Trainer(PedRec::TrainingType t) : mTrainerType(t)
 {
     qDebug() << "Instanciating Trainer class for "
-             << (t == PedRecog::POSITIVE ? "POSITIVE" : "NEGATIVE");
+             << (t == PedRec::POSITIVE ? "POSITIVE" : "NEGATIVE");
 
 }
 
-void Trainer::setTrainerType(PedRecog::TrainingType t)
+void Trainer::setTrainerType(PedRec::TrainingType t)
 {
     this->mTrainerType = t;
 }
@@ -29,7 +29,7 @@ void Trainer::setFilters(bool gauss, bool sobel, bool feature)
     mFilterFeature = feature;
 }
 
-PedRecog::TrainingType Trainer::trainerType()
+PedRec::TrainingType Trainer::trainerType()
 {
     return mTrainerType;
 }
@@ -54,29 +54,31 @@ void Trainer::setNumToTrain(int numToTrain)
     mNumToTrain = numToTrain;
 }
 
-PedRecog::training_vector Trainer::performTraining()
+PedRec::training_vector Trainer::performTraining()
 {
-    PedRecog::training_vector result;
+    PedRec::training_vector result;
     int i;
 
     qDebug() << "Starting "
-             << (mTrainerType == PedRecog::POSITIVE ? "POSITIVE" : "NEGATIVE")
-             <<  "training session" << QTime::currentTime();
+             << (mTrainerType == PedRec::POSITIVE ? "POSITIVE" : "NEGATIVE")
+             <<  " training session" << QTime::currentTime().toString();
 
     for(i = 0; i < mNumToTrain; i++) {
         result.push_back(getPixelValues(mFileList->at(i)));
     }
 
-    qDebug() << "Finished training session" << QTime::currentTime();
+    qDebug() << "Finished "
+             << (mTrainerType == PedRec::POSITIVE ? "POSITIVE" : "NEGATIVE")
+             << " training session" << QTime::currentTime().toString();
 
     return result;
 }
 
-PedRecog::pixel_vector Trainer::getPixelValues(QString file)
+PedRec::pixel_vector Trainer::getPixelValues(QString file)
 {
     //THIS IS THE ONLY THING WE LEARNT FROM RDSP-2 UBUNGS!!!!
 
-    PedRecog::pixel_vector pv;
+    PedRec::pixel_vector pv;
     cv::Mat mat = cv::imread(file.toStdString());
 
     int rows = mat.rows;

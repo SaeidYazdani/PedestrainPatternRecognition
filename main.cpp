@@ -6,7 +6,7 @@
 
 #include "manager.h"
 #include "trainer.h"
-#include "training_type.h"
+#include "pedrecog_types.h"
 
 int main(int argc, char *argv[])
 {

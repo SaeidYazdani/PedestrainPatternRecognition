@@ -20,5 +20,5 @@ include(deployment.pri)
 
 HEADERS += \
     trainer.h \
-    training_type.h \
-    manager.h
+    manager.h \
+    pedrecog_types.h

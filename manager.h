@@ -6,7 +6,7 @@
 #include <QUrl>
 
 #include "trainer.h"
-#include "training_type.h"
+#include "pedrecog_types.h"
 
 class Manager : public QObject
 {
@@ -16,14 +16,18 @@ public:
     explicit Manager(QObject *parent = 0);
 
 
-    PedRecog::WorkState state() const {return mState;}
+    PedRec::WorkState state() const {return mState;}
 
     int numberOfImagesToTrain() const;
 
-    PedRecog::TrainingFilters filters() const;
-    PedRecog::TrainingMethod method() const;
+    PedRec::TrainingFilters filters() const;
+    PedRec::TrainingMethod method() const;
 
     QString convertToFilePath(QUrl url, QString name);
+
+    PedRec::SizeMode sizeMode() const;
+
+    QString outputFileName() const;
 
 signals:
 
@@ -36,23 +40,29 @@ public slots:
     void setNumberOfImagesToTrain(QString num);
     void setMethod(int method);
     void setFilters(int filters);
+    void setSizeMode(int mode);
+    void setOutputFileName(QString name);
 
 
 private:
 
-    //manager sate
-    PedRecog::WorkState mState;
+    //manager state
+    //TODO this is useless...no time to implement stop procedure
+    PedRec::WorkState mState;
 
     //folders, files, lists
     QUrl    mPositiveDataPath;
     QUrl    mNegativeDataPath;
     QUrl    mOutputPath;
+    QString mOutputFileName;
+
     QStringList mPositiveFilesList;
     QStringList mNegativeFilesList;
 
     //options
-    PedRecog::TrainingFilters mFilters;
-    PedRecog::TrainingMethod mMethod;
+    PedRec::TrainingFilters mFilters;
+    PedRec::TrainingMethod mMethod;
+    PedRec::SizeMode mSizeMode;
     int mNumberOfImagesToTrain;
 
 
@@ -60,7 +70,7 @@ private:
     //functions
 
 
-    QStringList generateFileList(PedRecog::TrainingType t);
+    QStringList generateFileList(PedRec::TrainingType t);
 };
 
 #endif // MANAGER_H

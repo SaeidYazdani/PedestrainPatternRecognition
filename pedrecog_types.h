@@ -2,11 +2,12 @@
 #define TRAINER_TYPE_H
 
 
-namespace PedRecog {
+//using namespace so we can access enums safely!
+namespace PedRec {
 
 /*  TYPES   */
-typedef std::vector<uchar> pixel_vector;
-typedef std::vector<pixel_vector> training_vector;
+typedef std::vector<uchar> pixel_vector; //result from pixel values of image
+typedef std::vector<pixel_vector> training_vector; //collection of pixel_vector
 
 /**
  * @brief The TrainingType enum
@@ -34,6 +35,14 @@ enum TrainingFilters {
     GAUSS   = 1,
     SOBEL   = 2,
     FEATURE = 4
+};
+
+/**
+ * @brief The SizeMode enum
+ */
+enum SizeMode {
+    RESIZE,
+    WINDOW
 };
 
 /**
