@@ -89,7 +89,7 @@ PedRec::training_vector Trainer::performTraining()
         qDebug() << "Number to train is greater than the list of files"
                  << "So the maximum training will be equal to number of "
                  <<  "available files. mNumToTrain = " << mNumToTrain
-                 << " mFilesList count = " << mFileList->count();
+                  << " mFilesList count = " << mFileList->count();
 
         mNumToTrain = mFileList->count();
     }
@@ -111,20 +111,14 @@ PedRec::pixel_vector Trainer::getPixelValues(QString file)
     PedRec::pixel_vector pv;
     cv::Mat mat = cv::imread(file.toStdString());
 
-    //check if resizing is required
-    if(mTrainerType == PedRec::NEGATIVE) { //only in negative
+    //check if resizing is required, do if necessary
+    if(mTrainerType == PedRec::NEGATIVE) { //only in negative mode
         if(mat.size() != mRequiredSize) { //if size is different
-            switch (mSizeMode) {
-            case PedRec::RESIZE:
-                    //do resize using opencv resize
-                break;
-
-            case PedRec::WINDOW:
-                    //do windowing
-                break;
-
-            default:
-                break;
+            if(mSizeMode == PedRec::RESIZE) {
+                cv::resize(mat,mat, mRequiredSize);
+            }
+            if(mSizeMode == PedRec::WINDOW) {
+                //TODO implement window resizing mode
             }
         }
     }

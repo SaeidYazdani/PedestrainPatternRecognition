@@ -11,7 +11,8 @@ SOURCES += main.cpp \
 RESOURCES += qml.qrc
 
 INCLUDEPATH += /usr/local/include/opencv
-LIBS += -L/usr/local/lib -lopencv_highgui -lopencv_imgcodecs -lopencv_core
+LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui \
+    -lopencv_imgproc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
