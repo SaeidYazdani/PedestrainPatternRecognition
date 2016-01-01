@@ -5,6 +5,8 @@
 #include <QFileInfo>
 #include <QDirIterator>
 
+#include <opencv2/core/core.hpp>
+
 Manager::Manager(QObject *parent) : QObject(parent)
 {
 
@@ -35,13 +37,27 @@ bool Manager::start()
     trainerPositive.setFilters(a, b, c);
     trainerPositive.setNumToTrain(mNumberOfImagesToTrain);
 
+    //get the size of one of positive files
+    //because for negative files we need to have same size
+    //either by resizing or windowing!
+    //Assumption is all positive files are the same size!!!!
+    cv::Size posSize = trainerPositive.getImageSize(mPositiveFilesList.at(0));
+
+    qDebug() << "Size of positive files are width = " << posSize.width
+             << "height = " << posSize.height;
+
 
     //Preparing negative trainer
     Trainer trainerNegative(PedRec::NEGATIVE);
     mNegativeFilesList = generateFileList(PedRec::NEGATIVE);
     trainerNegative.setFileList(&mNegativeFilesList);
     trainerNegative.setFilters(a, b, c);
-    trainerPositive.setNumToTrain(mNumberOfImagesToTrain);
+    trainerNegative.setNumToTrain(mNumberOfImagesToTrain);
+    trainerNegative.setSizeMode(mSizeMode);
+    trainerNegative.setRequiredSize(posSize);
+
+    //common settings for both positive and negative
+
 
 
     //Start work
@@ -49,8 +65,18 @@ bool Manager::start()
     PedRec::training_vector posResult = trainerPositive.performTraining();
     PedRec::training_vector negResult = trainerNegative.performTraining();
 
-    //TODO now save to ARFF file ;)
-
+    //Generate the ARFF file
+    ArffGenerator ag;
+    ag.setImageSize(posSize);
+    ag.setPosVector(&posResult);
+    ag.setNegVector(&negResult);
+    ag.setPath(mOutputPath.toLocalFile() + "/" + mOutputFileName);
+    bool result = ag.generate();
+    if(result) {
+        qDebug() << "Output ARFF file created.";
+    } else {
+        qDebug() << "Could not generate ARFF file";
+    }
 
     mState = PedRec::IDLE;
 

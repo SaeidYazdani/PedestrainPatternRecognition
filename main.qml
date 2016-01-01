@@ -319,7 +319,7 @@ Window {
                                     //send other options
                                     cpManager.setSizeMode(coboSizeMode.currentIndex);
                                     cpManager.setOutputFileName(tfFileName.text);
-                                    cpManager.setNumberOfImagesToTrain(tfNumToTrain.text);
+                                    cpManager.setNumberOfImagesToTrain(tfNumToTrain.text.trim());
 
                                     var startTime = new Date().getTime();
                                     var result = cpManager.start();

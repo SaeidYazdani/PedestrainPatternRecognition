@@ -5,7 +5,8 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
     trainer.cpp \
-    manager.cpp
+    manager.cpp \
+    arffgenerator.cpp
 
 RESOURCES += qml.qrc
 
@@ -21,4 +22,5 @@ include(deployment.pri)
 HEADERS += \
     trainer.h \
     manager.h \
-    pedrecog_types.h
+    pedrecog_types.h \
+    arffgenerator.h

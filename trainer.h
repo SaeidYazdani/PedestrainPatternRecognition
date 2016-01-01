@@ -9,6 +9,10 @@
 
 #include "pedrecog_types.h"
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
 
 class Trainer : public QObject
 {
@@ -17,7 +21,10 @@ public:
 
     /*  CONSTRUCTORS    */
     explicit Trainer(QObject *parent = 0);
-
+    /**
+     * @brief Trainer
+     * @param type type of training, POSITIVE or NEGATIVE
+     */
     Trainer(PedRec::TrainingType type);
 
 
@@ -69,20 +76,52 @@ public:
      */
     PedRec::TrainingType trainerType();
 
-
+    /**
+     * @brief fileList
+     * @return
+     */
     QStringList *fileList() const;
+
+    /**
+     * @brief setFileList
+     * @param fileList
+     */
     void setFileList(QStringList *fileList);
 
+    /**
+     * @brief getNumToTrain
+     * @return
+     */
     int getNumToTrain() const;
+
+    /**
+     * @brief setNumToTrain
+     * @param numToTrain
+     */
     void setNumToTrain(int numToTrain);
+
+    /**
+     * @brief getImageSize
+     * @param file
+     * @return QPoint
+     */
+    cv::Size getImageSize(QString file);
+
+    PedRec::SizeMode getSizeMode() const {return mSizeMode;}
+    void setSizeMode(const PedRec::SizeMode &sizeMode);
+
+    cv::Size getRequiredSize() const;
+    void setRequiredSize(const cv::Size &requiredSize);
 
 private:
     /*  MEMBERS */
     PedRec::TrainingType mTrainerType;
+    PedRec::SizeMode mSizeMode;
     QStringList *mFileList;
 
     int mNumToTrain;
     bool mFilterGauss, mFilterSobel, mFilterFeature;
+    cv::Size mRequiredSize;
 
 
     /*  FUNCTIONS   */

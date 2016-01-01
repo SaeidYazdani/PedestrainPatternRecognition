@@ -9,6 +9,7 @@ namespace PedRec {
 typedef std::vector<uchar> pixel_vector; //result from pixel values of image
 typedef std::vector<pixel_vector> training_vector; //collection of pixel_vector
 
+
 /**
  * @brief The TrainingType enum
  */

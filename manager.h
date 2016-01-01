@@ -5,8 +5,9 @@
 #include <QtQml>
 #include <QUrl>
 
-#include "trainer.h"
 #include "pedrecog_types.h"
+#include "trainer.h"
+#include "arffgenerator.h"
 
 class Manager : public QObject
 {
