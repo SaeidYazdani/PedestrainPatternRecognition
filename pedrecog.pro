@@ -6,7 +6,9 @@ CONFIG += c++11
 SOURCES += main.cpp \
     trainer.cpp \
     manager.cpp \
-    arffgenerator.cpp
+    arffgenerator.cpp \
+    bayesianclassifier.cpp \
+    helpers.cpp
 
 RESOURCES += qml.qrc
 
@@ -23,5 +25,6 @@ include(deployment.pri)
 HEADERS += \
     trainer.h \
     manager.h \
-    pedrecog_types.h \
-    arffgenerator.h
+    arffgenerator.h \
+    bayesianclassifier.h \
+    patrec_types.h

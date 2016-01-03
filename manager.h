@@ -5,9 +5,10 @@
 #include <QtQml>
 #include <QUrl>
 
-#include "pedrecog_types.h"
+#include "patrec_types.h"
 #include "trainer.h"
 #include "arffgenerator.h"
+#include "bayesianclassifier.h"
 
 class Manager : public QObject
 {
@@ -17,16 +18,16 @@ public:
     explicit Manager(QObject *parent = 0);
 
 
-    PedRec::WorkState state() const {return mState;}
+    pr::WorkState state() const {return mState;}
 
     int numberOfImagesToTrain() const;
 
-    PedRec::TrainingFilters filters() const;
-    PedRec::TrainingMethod method() const;
+    pr::TrainingFilters filters() const;
+    pr::TrainingMethod method() const;
 
     QString convertToFilePath(QUrl url, QString name);
 
-    PedRec::SizeMode sizeMode() const;
+    pr::SizeMode sizeMode() const;
 
     QString outputFileName() const;
 
@@ -49,7 +50,7 @@ private:
 
     //manager state
     //TODO this is useless...no time to implement stop procedure
-    PedRec::WorkState mState;
+    pr::WorkState mState;
 
     //folders, files, lists
     QUrl    mPositiveDataPath;
@@ -61,9 +62,9 @@ private:
     QStringList mNegativeFilesList;
 
     //options
-    PedRec::TrainingFilters mFilters;
-    PedRec::TrainingMethod mMethod;
-    PedRec::SizeMode mSizeMode;
+    pr::TrainingFilters mFilters;
+    pr::TrainingMethod mMethod;
+    pr::SizeMode mSizeMode;
     int mNumberOfImagesToTrain;
 
 
@@ -71,7 +72,7 @@ private:
     //functions
 
 
-    QStringList generateFileList(PedRec::TrainingType t);
+    QStringList generateFileList(pr::TrainingType t);
 };
 
 #endif // MANAGER_H

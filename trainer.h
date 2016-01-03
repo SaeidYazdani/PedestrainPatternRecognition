@@ -7,7 +7,7 @@
 #include <QUrl>
 #include <QString>
 
-#include "pedrecog_types.h"
+#include "patrec_types.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -25,7 +25,7 @@ public:
      * @brief Trainer
      * @param type type of training, POSITIVE or NEGATIVE
      */
-    Trainer(PedRec::TrainingType type);
+    Trainer(pr::TrainingType type);
 
 
     /*  FUNCTIONS   */
@@ -34,7 +34,7 @@ public:
      * @brief performTraining
      * @return
      */
-    PedRec::training_vector performTraining();
+    pr::training_vector performTraining();
 
     /**
      * @brief getPixelValues goes through pixels and read and store
@@ -42,14 +42,7 @@ public:
      * @param file the file to load
      * @return pointer to beggining of result int array
      */
-    PedRec::pixel_vector getPixelValues(QString file);
-
-    /**
-     * @brief showSingleImage
-     * @param file
-     */
-    void showSingleImage(QString file);
-
+    pr::pixel_vector getPixelValues(QString file);
 
     //SETTERS
 
@@ -57,7 +50,7 @@ public:
      * @brief setTrainerType
      * @param trainerType
      */
-    void setTrainerType(PedRec::TrainingType trainerType);
+    void setTrainerType(pr::TrainingType trainerType);
 
     /**
      * @brief Set the pre-filters that should be done
@@ -74,7 +67,7 @@ public:
      * @brief trainerType
      * @return
      */
-    PedRec::TrainingType trainerType();
+    pr::TrainingType trainerType();
 
     /**
      * @brief fileList
@@ -100,23 +93,16 @@ public:
      */
     void setNumToTrain(int numToTrain);
 
-    /**
-     * @brief getImageSize
-     * @param file
-     * @return QPoint
-     */
-    cv::Size getImageSize(QString file);
-
-    PedRec::SizeMode getSizeMode() const {return mSizeMode;}
-    void setSizeMode(const PedRec::SizeMode &sizeMode);
+    pr::SizeMode getSizeMode() const {return mSizeMode;}
+    void setSizeMode(const pr::SizeMode &sizeMode);
 
     cv::Size getRequiredSize() const;
     void setRequiredSize(const cv::Size &requiredSize);
 
 private:
     /*  MEMBERS */
-    PedRec::TrainingType mTrainerType;
-    PedRec::SizeMode mSizeMode;
+    pr::TrainingType mTrainerType;
+    pr::SizeMode mSizeMode;
     QStringList *mFileList;
 
     int mNumToTrain;

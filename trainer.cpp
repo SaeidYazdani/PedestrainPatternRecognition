@@ -1,8 +1,5 @@
-#include <QPoint>
-
-
 #include "trainer.h"
-#include "pedrecog_types.h"
+#include "patrec_types.h"
 
 
 Trainer::Trainer(QObject *parent) : QObject(parent)
@@ -10,14 +7,14 @@ Trainer::Trainer(QObject *parent) : QObject(parent)
     //for compatibility with Qt Framework
 }
 
-Trainer::Trainer(PedRec::TrainingType t) : mTrainerType(t)
+Trainer::Trainer(pr::TrainingType t) : mTrainerType(t)
 {
     qDebug() << "Instanciating Trainer class for "
-             << (t == PedRec::POSITIVE ? "POSITIVE" : "NEGATIVE");
+             << (t == pr::POSITIVE ? "POSITIVE" : "NEGATIVE");
 
 }
 
-void Trainer::setTrainerType(PedRec::TrainingType t)
+void Trainer::setTrainerType(pr::TrainingType t)
 {
     this->mTrainerType = t;
 }
@@ -29,7 +26,7 @@ void Trainer::setFilters(bool gauss, bool sobel, bool feature)
     mFilterFeature = feature;
 }
 
-PedRec::TrainingType Trainer::trainerType()
+pr::TrainingType Trainer::trainerType()
 {
     return mTrainerType;
 }
@@ -54,13 +51,7 @@ void Trainer::setNumToTrain(int numToTrain)
     mNumToTrain = numToTrain;
 }
 
-cv::Size Trainer::getImageSize(QString file)
-{
-    return cv::imread(file.toStdString()).size();
-}
-
-
-void Trainer::setSizeMode(const PedRec::SizeMode &sizeMode)
+void Trainer::setSizeMode(const pr::SizeMode &sizeMode)
 {
     mSizeMode = sizeMode;
 }
@@ -75,13 +66,13 @@ void Trainer::setRequiredSize(const cv::Size &requiredSize)
     mRequiredSize = requiredSize;
 }
 
-PedRec::training_vector Trainer::performTraining()
+pr::training_vector Trainer::performTraining()
 {
-    PedRec::training_vector result;
+    pr::training_vector result;
     int i;
     
     qDebug() << "Starting "
-             << (mTrainerType == PedRec::POSITIVE ? "POSITIVE" : "NEGATIVE")
+             << (mTrainerType == pr::POSITIVE ? "POSITIVE" : "NEGATIVE")
              <<  " training session" << QTime::currentTime().toString();
 
     //debug
@@ -100,24 +91,25 @@ PedRec::training_vector Trainer::performTraining()
     }
 
     qDebug() << "Finished "
-             << (mTrainerType == PedRec::POSITIVE ? "POSITIVE" : "NEGATIVE")
+             << (mTrainerType == pr::POSITIVE ? "POSITIVE" : "NEGATIVE")
              << " training session" << QTime::currentTime().toString();
 
     return result;
 }
 
-PedRec::pixel_vector Trainer::getPixelValues(QString file)
+pr::pixel_vector Trainer::getPixelValues(QString file)
 {
-    PedRec::pixel_vector pv;
-    cv::Mat mat = cv::imread(file.toStdString());
+    pr::pixel_vector pv;
+    cv::Mat mat = cv::imread(file.toStdString(), CV_LOAD_IMAGE_ANYDEPTH
+                             | CV_LOAD_IMAGE_ANYCOLOR);
 
     //check if resizing is required, do if necessary
-    if(mTrainerType == PedRec::NEGATIVE) { //only in negative mode
+    if(mTrainerType == pr::NEGATIVE) { //only in negative mode
         if(mat.size() != mRequiredSize) { //if size is different
-            if(mSizeMode == PedRec::RESIZE) {
+            if(mSizeMode == pr::RESIZE) {
                 cv::resize(mat,mat, mRequiredSize);
             }
-            if(mSizeMode == PedRec::WINDOW) {
+            if(mSizeMode == pr::WINDOW) {
                 //TODO implement window resizing mode
             }
         }
@@ -145,20 +137,17 @@ PedRec::pixel_vector Trainer::getPixelValues(QString file)
     int rows = mat.rows;
     int cols = mat.cols;
 
-    if (mat.isContinuous())
-    {
+    if (mat.isContinuous()) {
         cols = rows*cols;
         rows = 1;
     }
 
     //THIS IS THE ONLY THING WE LEARNT FROM RDSP-2 UBUNGS!!!!
-    for (int r = 0; r < rows; ++r)
-    {
+    for (int r = 0; r < rows; ++r) {
         //pointer for pixels
         const uchar *pInput = mat.ptr<uchar>(r);
 
-        for (int c = 0; c < cols; ++c)
-        {
+        for (int c = 0; c < cols; ++c) {
             pv.push_back(*pInput);
             ++pInput;
         }
@@ -167,8 +156,3 @@ PedRec::pixel_vector Trainer::getPixelValues(QString file)
     return pv;
 }
 
-void Trainer::showSingleImage(QString file)
-{
-    cv::Mat img = cv::imread(file.toStdString());
-    cv::imshow(file.toStdString(), img);
-}

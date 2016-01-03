@@ -5,22 +5,22 @@ ArffGenerator::ArffGenerator()
 
 }
 
-PedRec::training_vector *ArffGenerator::posVector() const
+pr::training_vector *ArffGenerator::posVector() const
 {
     return mPosVector;
 }
 
-void ArffGenerator::setPosVector(PedRec::training_vector *posVector)
+void ArffGenerator::setPosVector(pr::training_vector *posVector)
 {
     mPosVector = posVector;
 }
 
-PedRec::training_vector *ArffGenerator::negVector() const
+pr::training_vector *ArffGenerator::negVector() const
 {
     return mNegVector;
 }
 
-void ArffGenerator::setNegVector(PedRec::training_vector *negVector)
+void ArffGenerator::setNegVector(pr::training_vector *negVector)
 {
     mNegVector = negVector;
 }
@@ -76,7 +76,7 @@ bool ArffGenerator::generate()
 
 void ArffGenerator::generateHeader(QTextStream &out)
 {
-    out << "@RELATION pedestrains\n"; //first line of the file
+    out << "@RELATION pedestrain\n"; //first line of the file
 
     //attributes -> pixel_row_col e.g. pixel_0_11 is pixel value @row 0, col 11
     int i,j;
@@ -96,11 +96,11 @@ void ArffGenerator::generateHeader(QTextStream &out)
 
 void ArffGenerator::generatePositiveData(QTextStream &out)
 {
-    int i,j;
+    unsigned int i,j;
 
     for(i = 0; i < mPosVector->size(); i++) {
 
-        PedRec::pixel_vector pv = mPosVector->at(i);
+        pr::pixel_vector pv = mPosVector->at(i);
 
         for(j = 0; j < pv.size(); j++) {
             out << pv.at(j) << ",";
@@ -112,11 +112,11 @@ void ArffGenerator::generatePositiveData(QTextStream &out)
 
 void ArffGenerator::generateNegativeData(QTextStream &out)
 {
-    int i,j;
+    unsigned int i,j;
 
     for(i = 0; i < mNegVector->size(); i++) {
 
-        PedRec::pixel_vector pv = mNegVector->at(i);
+        pr::pixel_vector pv = mNegVector->at(i);
 
         for(j = 0; j < pv.size(); j++) {
             out << pv.at(j) << ",";
