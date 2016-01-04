@@ -25,18 +25,12 @@ void convertMeanVectorToImageAndShow(cv::Size size, int type
              << " h=" << size.height << " and type=" << type
              << "  Vector size=" << vector->size();
 
-    //first convert from double to uchar
-    uchar pv[vector->size()];
-    for(unsigned int i = 0; i < vector->size(); i++) {
-        pv[i] = (uchar) vector->at(i);
-    }
-
-    //create Matrix
-    cv::Mat out(size, CV_8UC1);
-    memcpy(out.data, &pv, vector->size()*sizeof(uchar));
+    //building a Mat object from vector pointer
+    cv::Mat out = cv::Mat(*vector).reshape(0, size.height);
+    out.convertTo(out, CV_8UC1);
 
     //show image in window
-    cv::namedWindow(windowName.toStdString(), cv::WINDOW_AUTOSIZE);
+    cv::namedWindow(windowName.toStdString(), cv::WINDOW_NORMAL);
     cv::imshow(windowName.toStdString(), out);
 }
 

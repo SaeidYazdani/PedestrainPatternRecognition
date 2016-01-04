@@ -1,6 +1,7 @@
 #ifndef ARFFGENERATOR_H
 #define ARFFGENERATOR_H
 
+#include <QTime>
 #include <QDebug>
 #include <QFile>
 #include <QString>

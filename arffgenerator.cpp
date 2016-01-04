@@ -47,6 +47,10 @@ void ArffGenerator::setImageSize(const cv::Size &imageSize)
 
 bool ArffGenerator::generate()
 {
+    qDebug() << "Generating ARFF file"
+             << mPath
+             << QTime::currentTime().toString();
+
     QFile file(mPath);
     //open file handle and ensure create and overwrite access
     file.open(QIODevice::WriteOnly | QIODevice::Truncate);
@@ -69,6 +73,9 @@ bool ArffGenerator::generate()
     //flush the stream and close the file
     out.flush();
     file.close();
+
+    qDebug() << "Arff file is written to disk"
+             << QTime::currentTime().toString();
 
     return true;
 }
