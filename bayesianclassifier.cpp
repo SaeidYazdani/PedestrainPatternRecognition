@@ -2,66 +2,73 @@
 
 BayesianClassifier::BayesianClassifier()
 {
-    mNewNegData = mNewPosData = true;
+    mPosMeanCalculated = mNegMeanCalculated = false;
 }
 
 void BayesianClassifier::setPosVector(pr::training_vector *posVector)
 {
-    mNewPosData = true;
+    mPosMeanCalculated = false;
     mPosVector = posVector;
 }
 
 void BayesianClassifier::setNegVector(pr::training_vector *negVector)
 {
-    mNewNegData = true;
+    mNegMeanCalculated = false;
     mNegVector = negVector;
 }
 
 pr::double_vector *BayesianClassifier::positiveMeanVector()
 {
-    if(!mNewPosData) {
+    if(mPosMeanCalculated) {
         return &mPositiveMeanVector;
     }
 
-    calculateMeanVector(mPosVector, mPositiveMeanVector);
-    mNewPosData = false; //to return the already calculated later
+    calculateMeanVector(mPosVector, mPositiveMeanVector
+                        , pr::TrainingType::POSITIVE);
     return &mPositiveMeanVector;
 }
 
 pr::double_vector *BayesianClassifier::positiveStdDevVector()
 {
-    if(!mNewPosData) {
-        return &mPositiveStdDevVector;
+    if(!mPosMeanCalculated) {
+        qDebug() << "Need to calculate POSITIVE Mean Vector first...";
+        calculateMeanVector(mPosVector, mPositiveMeanVector
+                            , pr::TrainingType::POSITIVE);
     }
 
-    calculateStdDevVector(mPosVector, mPositiveStdDevVector);
-    mNewPosData = false; //to return the already calculated later
+    calculateStdDevVector(mPosVector, mPositiveStdDevVector
+                          , pr::TrainingType::POSITIVE);
     return &mPositiveStdDevVector;
 }
 
 pr::double_vector *BayesianClassifier::negativeMeanVector()
 {
-    if(!mNewNegData) {
+    if(mNegMeanCalculated) {
         return &mNegativeMeanVector;
     }
 
-    calculateMeanVector(mNegVector, mNegativeMeanVector);
-    return &mPositiveMeanVector;
+    calculateMeanVector(mNegVector, mNegativeMeanVector
+                        , pr::TrainingType::NEGATIVE);
+    return &mNegativeMeanVector;
 }
 
 pr::double_vector *BayesianClassifier::negativeStdDevVector()
 {
-    if(!mNewNegData) {
-        return &mNegativeStdDevVector;
+    if(!mNegMeanCalculated) {
+        qDebug() << "Need to calculate NEGATIVE Mean Vector first...";
+        calculateMeanVector(mNegVector, mNegativeMeanVector
+                            , pr::TrainingType::NEGATIVE);
     }
 
-    calculateStdDevVector(mNegVector, mNegativeStdDevVector);
+    calculateStdDevVector(mNegVector, mNegativeStdDevVector
+                          , pr::TrainingType::NEGATIVE);
     return &mNegativeStdDevVector;
 }
 
 void BayesianClassifier::calculateMeanVector(pr::training_vector *data
-                                             , pr::double_vector &out)
-{
+                                             , pr::double_vector &out
+                                             , pr::TrainingType trainingType) {
+
     //note: assumption is all elements in vector have the same size!
     //this should make no problem as long as the images resulted in the
     //vector and its sub vectors all had the same size!
@@ -92,11 +99,51 @@ void BayesianClassifier::calculateMeanVector(pr::training_vector *data
     }
 
     out = colSums;
+
+    switch(trainingType) {
+        case pr::TrainingType::POSITIVE:
+            mPosMeanCalculated = true;
+            return;
+
+        case pr::TrainingType::NEGATIVE:
+            mNegMeanCalculated = true;
+            return;
+
+        default:
+            qDebug() << "INVALID enum for TrainingType is given";
+    }
 }
 
-void BayesianClassifier::calculateStdDevVector(pr::training_vector *data, pr::double_vector &out)
-{
+void BayesianClassifier::calculateStdDevVector(pr::training_vector *data
+                                               , pr::double_vector &out
+                                               ,pr::TrainingType trainingType) {
+
     //TODO implement this...should be very similar to mean vector calculation
+
+    //possibly it should be like this
+//    double sum = std::accumulate(data->begin(), data->end(), 0.0);
+//    double mean = sum / data->size();
+
+//    std::vector<double> diff(data->size());
+//    std::transform(data->begin(), data->end(), diff.begin(),
+//                   std::bind2nd(std::minus<double>(), mean));
+//    double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+//    double stdev = std::sqrt(sq_sum / data->size());
+
+
+
+    switch(trainingType) {
+        case pr::TrainingType::POSITIVE:
+            mPosMeanCalculated = true;
+            return;
+
+        case pr::TrainingType::NEGATIVE:
+            mNegMeanCalculated = true;
+            return;
+
+        default:
+            qDebug() << "INVALID enum for TrainingType is given";
+    }
 
 }
 
