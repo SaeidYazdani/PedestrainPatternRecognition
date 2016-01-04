@@ -5,6 +5,11 @@ ArffGenerator::ArffGenerator()
 
 }
 
+ArffGenerator::ArffGenerator(QString file) : mPath(file)
+{
+
+}
+
 pr::training_vector *ArffGenerator::posVector() const
 {
     return mPosVector;
