@@ -82,20 +82,32 @@ bool Manager::start()
 
     //calculate mean and variance for baysian
     if(mMethod == pr::BAYESIAN) {
-        qDebug() << "Calculating positive Bayesian mean vector"
-                 << QTime::currentTime().toString();
+
 
         BayesianClassifier bc;
         bc.setPosVector(&posResult);
         bc.setNegVector(&negResult);
-        pr::double_vector *posMeanVector = bc.positiveMeanVector();
 
-        qDebug() << "showing positive Bayesian mean value as an image"
+        qDebug() << "Calculating positive Bayesian Mean vector"
                  << QTime::currentTime().toString();
-
+        pr::double_vector *posMeanVector = bc.positiveMeanVector();
+        qDebug() << "showing positive Bayesian Mean as an image"
+                 << QTime::currentTime().toString();
         //show mean vector as image!!
         pr::convertMeanVectorToImageAndShow(posSize, posType, posMeanVector
                                                  , "POSITIVE MEAN VECTOR");
+
+
+        qDebug() << "Calculating positive Bayesian StdDev vector"
+                 << QTime::currentTime().toString();
+        pr::double_vector *posStdDevVector = bc.positiveStdDevVector();
+        qDebug() << "showing positive Bayesian StdDev as an image"
+                 << QTime::currentTime().toString();
+        //show mean vector as image!!
+        pr::convertMeanVectorToImageAndShow(posSize, posType, posStdDevVector
+                                                 , "POSITIVE STD DEV VECTOR");
+
+
     }
 
     mState = pr::IDLE;

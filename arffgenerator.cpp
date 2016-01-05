@@ -73,7 +73,7 @@ bool ArffGenerator::generate()
     //positive data
     generatePositiveData(out);
     //negative data
-    generateNegativeData(out);
+    //generateNegativeData(out);
 
     //flush the stream and close the file
     out.flush();
