@@ -95,7 +95,7 @@ cv::Size getImageSize(QString file);
  * @param vector
  * @param windowName
  */
-void convertMeanVectorToImageAndShow(cv::Size size, int type
+void convertVectorToImageAndShow(cv::Size size, int type
                                      , pr::double_vector *vector
                                      , QString windowName);
 

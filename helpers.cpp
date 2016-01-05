@@ -16,7 +16,7 @@ int getImageType(QString file)
     return cv::imread(file.toStdString()).type();
 }
 
-void convertMeanVectorToImageAndShow(cv::Size size, int type
+void convertVectorToImageAndShow(cv::Size size, int type
                                      , pr::double_vector *vector
                                      , QString windowName) {
 

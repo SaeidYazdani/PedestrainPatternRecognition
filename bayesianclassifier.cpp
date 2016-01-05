@@ -130,13 +130,10 @@ void BayesianClassifier::calculateStdDevVector(pr::training_vector *data
     unsigned char *pd = &data->at(0).at(0);
     //pointer to the first element of already calculated mean vector
     double *pm = &mPositiveMeanVector.at(0);
-
     //an array to hold result of variance
     double variance[mPositiveMeanVector.size()] = {0}; //initialize all with 0
     //pointer to the variance array
     double *vp = variance;
-
-    pr::double_vector varianceVector; //for the final result
 
     //formula = 1/n*sqrt((x11 - m)^2 + (x21 - m)^2 + ... +  (xn1 - m)^2)
 
@@ -158,13 +155,9 @@ void BayesianClassifier::calculateStdDevVector(pr::training_vector *data
         pm++;
     }
 
-    //convert variance array to vector
-    for(i = 0; i < imgSize; i++) {
-        varianceVector.push_back(variance[i]);
-    }
-
-    //assign the result to the passed argument
-    out = varianceVector;
+    //assign the result to the passed argument by converting array to vector
+    out = pr::double_vector(variance
+                            , variance + sizeof(variance) / sizeof(variance[0]));
 
     //set boolean values of calculation done
     switch(trainingType) {

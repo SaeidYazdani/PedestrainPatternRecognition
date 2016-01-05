@@ -73,7 +73,7 @@ bool ArffGenerator::generate()
     //positive data
     generatePositiveData(out);
     //negative data
-    //generateNegativeData(out);
+    generateNegativeData(out);
 
     //flush the stream and close the file
     out.flush();
@@ -109,15 +109,13 @@ void ArffGenerator::generateHeader(QTextStream &out)
 void ArffGenerator::generatePositiveData(QTextStream &out)
 {
     unsigned int i,j;
+    unsigned int vectorSize = mPosVector->size();
+    unsigned int elementSize = mPosVector->at(0).size();
 
-    for(i = 0; i < mPosVector->size(); i++) {
-
-        pr::pixel_vector pv = mPosVector->at(i);
-
-        for(j = 0; j < pv.size(); j++) {
-            out << pv.at(j) << ",";
+    for(i = 0; i < vectorSize; i++) {
+        for(j = 0; j < elementSize; j++) {
+            out << mPosVector->at(i).at(j) << ",";
         }
-
         out << "POSITIVE\n";
     }
 }
@@ -125,16 +123,13 @@ void ArffGenerator::generatePositiveData(QTextStream &out)
 void ArffGenerator::generateNegativeData(QTextStream &out)
 {
     unsigned int i,j;
+    unsigned int vectorSize = mNegVector->size();
+    unsigned int elementSize = mNegVector->at(0).size();
 
-    for(i = 0; i < mNegVector->size(); i++) {
-
-        pr::pixel_vector pv = mNegVector->at(i);
-
-        for(j = 0; j < pv.size(); j++) {
-            out << pv.at(j) << ",";
+    for(i = 0; i < vectorSize; i++) {
+        for(j = 0; j < elementSize; j++) {
+            out <<  mNegVector->at(i).at(j) << ",";
         }
-
         out << "NEGATIVE\n";
     }
 }
-
