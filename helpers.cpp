@@ -4,6 +4,22 @@
 
 namespace pr {
 
+QString getFileTypeEnumAsQString(pr::FileType fileType) {
+    switch(fileType) {
+    case pr::FileType::COMPLETE:
+        return QString("COMPLETE");
+
+    case pr::FileType::POSITIVE_ONLY:
+        return QString("POSITIVE_ONLY");
+
+    case pr::FileType::NEGATIVE_ONLY:
+        return QString("NEGATIVE_ONLY");
+
+    default:
+        return QString("UNSPECIFIED");
+    }
+}
+
 
 cv::Size getImageSize(QString file)
 {
@@ -17,8 +33,8 @@ int getImageType(QString file)
 }
 
 void convertVectorToImageAndShow(cv::Size size, int type
-                                     , pr::double_vector *vector
-                                     , QString windowName) {
+                                 , pr::double_vector *vector
+                                 , QString windowName) {
 
     //NOTE type of the benchmark photos are "16"
     qDebug() << "Converting MeanVector to Mat of size w=" << size.width

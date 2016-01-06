@@ -68,8 +68,11 @@ bool Manager::start()
     ag.setImageSize(posSize);
     ag.setPosVector(&posResult);
     ag.setNegVector(&negResult);
-    ag.setPath(mOutputPath.toLocalFile() + "/" + mOutputFileName);
-    bool result = ag.generate();
+    ag.setPath(mOutputPath.toLocalFile());
+    ag.setProjectName(mProjectName);
+    bool result = ag.generateArff(pr::FileType::COMPLETE);
+    result = result & ag.generateArff(pr::FileType::POSITIVE_ONLY);
+    result = result & ag.generateArff(pr::FileType::NEGATIVE_ONLY);
     if(!result) {
         qDebug() << "Could not generate ARFF file";
     }
@@ -118,6 +121,12 @@ bool Manager::start()
         //show neg std dev vector as image!!
         pr::convertVectorToImageAndShow(posSize, posType, negStdDevVector
                                                  , "NEGATIVE STD DEV VECTOR");
+
+        //save vectors
+        ag.saveSingleVector("positive_mean", posMeanVector);
+        ag.saveSingleVector("positive_std_dev", posStdDevVector);
+        ag.saveSingleVector("negative_mean", negMeanVector);
+        ag.saveSingleVector("negative_std_dev", negStdDevVector);
     }
 
     mState = pr::IDLE;
@@ -281,13 +290,13 @@ void Manager::setSizeMode(int mode)
 
 void Manager::setOutputFileName(QString name)
 {
-    mOutputFileName = name;
+    mProjectName = name;
 }
 
 
 QString Manager::outputFileName() const
 {
-    return mOutputFileName;
+    return mProjectName;
 }
 
 pr::SizeMode Manager::sizeMode() const

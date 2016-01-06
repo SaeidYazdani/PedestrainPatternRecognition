@@ -72,7 +72,25 @@ enum WorkState {
     DONE
 };
 
+/**
+ * @brief The FileType enum. To specify type of ARFF file.
+ */
+enum FileType {
+    COMPLETE, //positive and negative values
+    POSITIVE_ONLY,
+    NEGATIVE_ONLY
+};
+
         /*  SOME STATIC METHODS!    */
+
+//enum related methods
+/**
+ * @brief getFileTypeEnumAsQString
+ * @param fileType
+ * @return
+ */
+QString getFileTypeEnumAsQString(pr::FileType fileType);
+
 
 /**
  * @brief getImageType

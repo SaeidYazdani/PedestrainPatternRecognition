@@ -10,25 +10,25 @@
 #include "arffgenerator.h"
 #include "bayesianclassifier.h"
 
+/**
+ * @brief The Manager class. This class manages the interaction between UI and
+ * the logic of the application. Users set project properties like folders,
+ * training type and other options and these will be stored in the manager class
+ * and then the manager class will perform the logic to accomplish the project
+ * based on the user input
+ */
 class Manager : public QObject
 {
     Q_OBJECT
 
 public:
     explicit Manager(QObject *parent = 0);
-
-
-    pr::WorkState state() const {return mState;}
-
     int numberOfImagesToTrain() const;
-
+    pr::WorkState state() const {return mState;}
     pr::TrainingFilters filters() const;
     pr::TrainingMethod method() const;
-
     QString convertToFilePath(QUrl url, QString name);
-
     pr::SizeMode sizeMode() const;
-
     QString outputFileName() const;
 
 signals:
@@ -56,7 +56,7 @@ private:
     QUrl    mPositiveDataPath;
     QUrl    mNegativeDataPath;
     QUrl    mOutputPath;
-    QString mOutputFileName;
+    QString mProjectName;
 
     QStringList mPositiveFilesList;
     QStringList mNegativeFilesList;

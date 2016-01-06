@@ -263,17 +263,17 @@ Window {
 
 
                             Label {
-                                text: "File name";
+                                text: "Project Name";
                             }
 
                             TextField {
 
-                                id: tfFileName
+                                id: tfProjectName
                                 validator: RegExpValidator {
                                     regExp: /^[-\w^&'@{}[\],$=!#().%+~ ]+$/
                                 }
                                 maximumLength: 128;
-                                text: qsTr("default.arff");
+                                text: qsTr("pedestrain");
                             }
                         }
 
@@ -318,7 +318,7 @@ Window {
 
                                     //send other options
                                     cpManager.setSizeMode(coboSizeMode.currentIndex);
-                                    cpManager.setOutputFileName(tfFileName.text);
+                                    cpManager.setOutputFileName(tfProjectName.text);
                                     cpManager.setNumberOfImagesToTrain(tfNumToTrain.text.trim());
 
                                     var startTime = new Date().getTime();

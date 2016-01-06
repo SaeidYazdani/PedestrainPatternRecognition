@@ -40,6 +40,17 @@ void ArffGenerator::setPath(const QString &path)
     mPath = path;
 }
 
+QString ArffGenerator::projectName() const
+{
+    return mProjectName;
+}
+
+void ArffGenerator::setProjectName(QString &projectName)
+{
+    mProjectName = projectName;
+}
+
+
 cv::Size ArffGenerator::imageSize() const
 {
     return mImageSize;
@@ -50,13 +61,36 @@ void ArffGenerator::setImageSize(const cv::Size &imageSize)
     mImageSize = imageSize;
 }
 
-bool ArffGenerator::generate()
+bool ArffGenerator::generateArff(pr::FileType fileType)
 {
+
+    QString path;
+
+    switch(fileType) {
+
+    case pr::FileType::COMPLETE:
+        path = QString(mPath).append(QDir::separator())
+                .append(mProjectName).append("_all.arff");
+        break;
+
+    case pr::FileType::POSITIVE_ONLY:
+        path = QString(mPath).append(QDir::separator())
+                .append(mProjectName).append("_positive.arff");
+        break;
+
+    case pr::FileType::NEGATIVE_ONLY:
+        path = QString(mPath).append(QDir::separator())
+                .append(mProjectName).append("_negative.arff");
+        break;
+    }
+
+    QFile file(path);
+
     qDebug() << "Generating ARFF file"
-             << mPath
+             << file.fileName()
              << QTime::currentTime().toString();
 
-    QFile file(mPath);
+
     //open file handle and ensure create and overwrite access
     file.open(QIODevice::WriteOnly | QIODevice::Truncate);
 
@@ -69,11 +103,22 @@ bool ArffGenerator::generate()
     QTextStream out(&file);
 
     //hedaer
-    generateHeader(out);
-    //positive data
-    generatePositiveData(out);
-    //negative data
-    generateNegativeData(out);
+    generateHeader(out, fileType);
+
+    //actual data
+    //Too lazy to convert FileType to a flag enum...lol
+    //anyways we have only 3 cases so who caaaaaaaaaaares
+    if(fileType == pr::FileType::COMPLETE) {
+        generatePositiveData(out);
+        generateNegativeData(out);
+    } else {
+
+        if(fileType == pr::FileType::POSITIVE_ONLY)
+            generatePositiveData(out);
+
+        if(fileType == pr::FileType::NEGATIVE_ONLY)
+            generateNegativeData(out);
+    }
 
     //flush the stream and close the file
     out.flush();
@@ -86,8 +131,13 @@ bool ArffGenerator::generate()
 }
 
 
-void ArffGenerator::generateHeader(QTextStream &out)
+void ArffGenerator::generateHeader(QTextStream &out, pr::FileType fileType)
 {
+    //first add some comments to the arff file :P
+
+    out << "%\tPROJECT=" << mProjectName << "\n"
+        << "%\tTYPE=" << pr::getFileTypeEnumAsQString(fileType) << "\n";
+
     out << "@RELATION pedestrain\n"; //first line of the file
 
     //attributes -> pixel_row_col e.g. pixel_0_11 is pixel value @row 0, col 11
@@ -100,7 +150,19 @@ void ArffGenerator::generateHeader(QTextStream &out)
     }
 
     //Classes
-    out << "@ATTRIBUTE Class {POSITIVE,NEGATIVE}\n";
+    switch (fileType) {
+    case pr::FileType::COMPLETE:
+        out << "@ATTRIBUTE Class {POSITIVE,NEGATIVE}\n";
+        break;
+
+    case pr::FileType::POSITIVE_ONLY:
+        out << "@ATTRIBUTE Class {POSITIVE}\n";
+        break;
+
+    case pr::FileType::NEGATIVE_ONLY:
+        out << "@ATTRIBUTE Class {NEGATIVE}\n";
+        break;
+    }
 
     //Data start
     out << "@DATA\n";
@@ -132,4 +194,45 @@ void ArffGenerator::generateNegativeData(QTextStream &out)
         }
         out << "NEGATIVE\n";
     }
+}
+
+bool ArffGenerator::saveSingleVector(QString name
+                                     , pr::double_vector *vector
+                                     , int fractions)
+{
+    QString path = QString(mPath).append(QDir::separator())
+            .append(mProjectName).append("_" + name + ".vector");
+
+    QFile file(path);
+
+    qDebug() << "Generating VECTOR file for " << name << "in" << file.fileName()
+             << QTime::currentTime().toString();
+
+
+    //open file handle and ensure create and overwrite access
+    file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+
+    //check if file has been opened
+    if(!file.isOpen()) {
+        qDebug() << "Error opening " << mPath << " for writing!";
+        return false;
+    }
+
+    QTextStream out(&file);
+
+    out << "%VECTOR FILE\n";
+
+    for(unsigned int i; i < vector->size(); i++) {
+        out << vector->at(i) << ",";
+    }
+
+    out <<"END\n";
+
+    out.flush();
+    file.close();
+
+    qDebug() << "Generating VECTOR is completed"
+             << QTime::currentTime().toString();
+
+    return true;
 }
