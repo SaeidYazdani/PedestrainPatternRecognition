@@ -110,7 +110,7 @@ void BayesianClassifier::calculateMeanVector(pr::training_vector *data
             return;
 
         default:
-            qDebug() << "INVALID enum for TrainingType is given";
+            qWarning() << "INVALID enum for TrainingType is given";
             return;
     }
 }
@@ -170,7 +170,7 @@ void BayesianClassifier::calculateStdDevVector(pr::training_vector *data
             return;
 
         default:
-            qDebug() << "INVALID enum for TrainingType is given";
+            qWarning() << "INVALID enum for TrainingType is given";
             return;
     }
 

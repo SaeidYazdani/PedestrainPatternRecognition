@@ -15,8 +15,7 @@ int main(int argc, char *argv[])
 
     auto root_context = engine.rootContext();
 
-    Manager manager; //manager instance on stack
-    //manager.setNumberOfImagesToTrain(0);
+    Manager manager;
 
     root_context->setContextProperty("cpManager", &manager);
 

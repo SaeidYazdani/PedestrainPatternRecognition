@@ -214,7 +214,7 @@ bool ArffGenerator::saveSingleVector(QString name
 
     //check if file has been opened
     if(!file.isOpen()) {
-        qDebug() << "Error opening " << mPath << " for writing!";
+        qWarning() << "Error opening " << mPath << " for writing!";
         return false;
     }
 

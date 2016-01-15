@@ -29,7 +29,6 @@ bool Manager::start()
     if(mFilters & pr::FEATURE)
         c = true;
 
-
     //Preparing positive trainer
     Trainer trainerPositive(pr::POSITIVE);
     mPositiveFilesList = generateFileList(pr::POSITIVE);
@@ -185,18 +184,18 @@ bool Manager::checkDataFolder(QUrl folderPath, int whichFolder)
                 break;
 
             default:
-                qDebug() << "Invalid folder ID received from QML. send 0 for"
+                qWarning() << "Invalid folder ID received from QML. send 0 for"
                          << " POSITIVE check and 1 for NEGATIVE check";
                 return false;
             }
 
             return true;
         } else {
-            qDebug() << "There are no 'pgm' files in " << folderPath;
+            qWarning() << "There are no 'pgm' files in " << folderPath;
             return false;
         }
     } else {
-        qDebug() << "Directory does not exist!";
+        qWarning() << "Directory does not exist!";
         return false;
     }
 }
@@ -218,11 +217,11 @@ bool Manager::checkOutputFolder(QUrl outPath)
             mOutputPath = outPath;
             return true;
         } else {
-            qDebug() << "Folder is not writeable!";
+            qWarning() << "Folder is not writeable!";
             return false;
         }
     } else {
-        qDebug() << "Directory does not exist!";
+        qWarning() << "Directory does not exist!";
         return false;
     }
 }
@@ -257,7 +256,7 @@ void Manager::setFilters(int filters)
 
     //in case QML calculated the flag wrong
     if(filters < 0 || filters > 8) {
-        qDebug() << "Invalid FILTERS enum received!"
+        qWarning() << "Invalid FILTERS enum received!"
                  << "NO filter will be used!";
         mFilters = pr::NONE;
         return;
@@ -283,7 +282,7 @@ void Manager::setSizeMode(int mode)
         break;
 
     default:
-        qDebug() << "Invalid enum value for SizeMode! setting it to RESIZE";
+        qWarning() << "Invalid enum value for SizeMode! setting it to RESIZE";
         break;
     }
 }
