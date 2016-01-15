@@ -55,6 +55,11 @@ void showSingleImage(QString file) {
     cv::imshow(file.toStdString(), img);
 }
 
+void showSingleImage(QString windowName, cv::Mat mat) {
+    qDebug() << "Showing " << windowName;
+    cv::imshow(windowName.toStdString(), mat);
+}
+
 void gaussFilter(cv::Mat *src, cv::Mat *dst, cv::Size kernelSize) {
     //TODO implement this
 }

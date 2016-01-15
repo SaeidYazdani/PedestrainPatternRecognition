@@ -1,6 +1,9 @@
 #ifndef BAYESIANCLASSIFIER_H
 #define BAYESIANCLASSIFIER_H
 
+#include <QString>
+
+#include "patrec_types.h"
 #include <opencv2/core/core.hpp>
 
 class BayesianClassifier
@@ -8,20 +11,21 @@ class BayesianClassifier
 
 public:
 
-    BayesianClassifier();
-    BayesianClassifier(cv::Mat *positiveData, cv::Mat *negativeData);
+    BayesianClassifier(QString className);
 
-    cv::Mat *positiveData() const;
-    void setPositiveData(cv::Mat *positiveData);
+    void createAggregateFromTrainingVector(pr::training_vector tv);
 
-    cv::Mat *negativeData() const;
-    void setNegativeData(cv::Mat *negativeData);
-
+    cv::Mat data() const;
 
 private:
 
-    cv::Mat *mPositiveData;
-    cv::Mat *mNegativeData;
+    QString mClassName;
+
+    cv::Mat mData;
+    cv::Mat mMatMean;
+    cv::Mat mMatVariance;
+    cv::Mat mMatCovariance;
+    cv::Mat mEigenVector;
 };
 
 #endif // BAYESIANCLASSIFIER_H

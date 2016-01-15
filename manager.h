@@ -9,6 +9,7 @@
 #include "trainer.h"
 #include "arffgenerator.h"
 #include "statisticscalculator.h"
+#include "bayesianclassifier.h"
 
 /**
  * @brief The Manager class. This class manages the interaction between UI and

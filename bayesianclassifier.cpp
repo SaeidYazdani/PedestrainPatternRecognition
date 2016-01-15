@@ -1,33 +1,33 @@
 #include "bayesianclassifier.h"
 
-BayesianClassifier::BayesianClassifier()
-{
 
+BayesianClassifier::BayesianClassifier(QString className)
+{
+    mClassName = className;
 }
 
-BayesianClassifier::BayesianClassifier(cv::Mat *positiveData
-                                       , cv::Mat *negativeData)
+void BayesianClassifier::createAggregateFromTrainingVector(pr::training_vector tv)
 {
-    mPositiveData = positiveData;
-    mNegativeData = negativeData;
+    //building a Mat object from vector pointer
+    cv::Mat mat(tv.size(), tv.at(0).size(), CV_8UC1);
+
+    int rows = mat.rows;
+    int cols = mat.cols;
+
+    for (int r = 0; r < rows; ++r) {
+
+        uchar *pInput = mat.ptr<uchar>(r);
+
+        for (int c = 0; c < cols; ++c) {
+            *pInput = tv.at(r)[c];
+            ++pInput;
+        }
+    }
+
+    mData = mat;
 }
 
-cv::Mat *BayesianClassifier::positiveData() const
+cv::Mat BayesianClassifier::data() const
 {
-    return mPositiveData;
-}
-
-void BayesianClassifier::setPositiveData(cv::Mat *positiveData)
-{
-    mPositiveData = positiveData;
-}
-
-cv::Mat *BayesianClassifier::negativeData() const
-{
-    return mNegativeData;
-}
-
-void BayesianClassifier::setNegativeData(cv::Mat *negativeData)
-{
-    mNegativeData = negativeData;
+    return mData;
 }

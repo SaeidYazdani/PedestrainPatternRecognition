@@ -124,6 +124,12 @@ void convertVectorToImageAndShow(cv::Size size, int type
  */
 void showSingleImage(QString file);
 
+/**
+ * @brief showSingleImage
+ * @param windowName name of the window
+ * @param mat pointer of a Mat
+ */
+void showSingleImage(QString windowName, cv::Mat mat);
 
 void gaussFilter(cv::Mat *src, cv::Mat *dst, cv::Size kernelSize);
 

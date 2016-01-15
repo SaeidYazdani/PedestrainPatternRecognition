@@ -98,4 +98,4 @@ private:
 
 };
 
-#endif // OLDBAYESIANCLASSIFIER_H
+#endif // STATISTICSCALCULATOR_H
