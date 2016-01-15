@@ -13,12 +13,10 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    auto root_context = engine.rootContext();
-
     Manager manager;
 
+    auto root_context = engine.rootContext();    
     root_context->setContextProperty("cpManager", &manager);
-
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

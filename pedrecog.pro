@@ -7,8 +7,9 @@ SOURCES += main.cpp \
     trainer.cpp \
     manager.cpp \
     arffgenerator.cpp \
+    helpers.cpp \
     bayesianclassifier.cpp \
-    helpers.cpp
+    statisticscalculator.cpp
 
 RESOURCES += qml.qrc
 
@@ -26,5 +27,6 @@ HEADERS += \
     trainer.h \
     manager.h \
     arffgenerator.h \
+    patrec_types.h \
     bayesianclassifier.h \
-    patrec_types.h
+    statisticscalculator.h

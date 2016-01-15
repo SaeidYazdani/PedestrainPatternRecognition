@@ -8,7 +8,7 @@
 #include "patrec_types.h"
 #include "trainer.h"
 #include "arffgenerator.h"
-#include "bayesianclassifier.h"
+#include "statisticscalculator.h"
 
 /**
  * @brief The Manager class. This class manages the interaction between UI and
@@ -67,11 +67,7 @@ private:
     pr::SizeMode mSizeMode;
     int mNumberOfImagesToTrain;
 
-
-
     //functions
-
-
     QStringList generateFileList(pr::TrainingType t);
 };
 

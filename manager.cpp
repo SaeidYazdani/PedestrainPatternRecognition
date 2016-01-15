@@ -79,7 +79,7 @@ bool Manager::start()
     //calculate mean and variance for baysian
     if(mMethod == pr::BAYESIAN) {
 
-        BayesianClassifier bc;
+        StatisticsCalculator bc;
         bc.setPosVector(&posResult);
         bc.setNegVector(&negResult);
 
