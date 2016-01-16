@@ -15,12 +15,13 @@ int main(int argc, char *argv[])
     app.setApplicationVersion("0.0.1 ALPHA");
     app.setApplicationName("Pedestrain Pattern Recognition");
 
-    QQmlApplicationEngine engine;
 
     Manager manager;
+    QQmlApplicationEngine engine;
 
     auto root_context = engine.rootContext();    
     root_context->setContextProperty("cpManager", &manager);
+
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

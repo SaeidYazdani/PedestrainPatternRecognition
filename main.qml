@@ -3,28 +3,68 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.2
+import Qt.labs.settings 1.0
 
 Window {
+    id: mainWindow;
     title: qsTr("Pedestrain Pattern Recognition")
 
     visible: true
     width: 800;
     height: 600;
 
-
     property int pathRectsHeight: 50
     property int margin: 10;
 
-    property url pathPos : "file:///home/saeid/Work/uni-projects/pattern-recog/data/training/pedestrain/18x36";
-    property url pathNeg : "file:///home/saeid/Work/uni-projects/pattern-recog/data/training/non-pedestrain/";
-    property url pathOut : "file:///home/saeid/Work/uni-projects/pattern-recog/data/output/";
-    property int numTrain : 0;
+    property url pathPos : "file:///";
+    property url pathNeg : "file:///";
+    property url pathOut : "file:///";
+    property int numTrain : 50;
 
-    //NOTE this is like form.load event in c#
+
+    //TODO later these should be used, not the vars of Window...redunduncyyy!!!!
+    Settings {
+        id: settings;
+
+        //training settings
+        property url pathPos: dialogNegPath.shortcuts.home;
+        property url pathNeg: dialogNegPath.shortcuts.home;
+        property url pathOut: dialogNegPath.shortcuts.home;
+        property int numTrain: 50;
+
+        //application settings
+        property int windowX: Screen.width / 2 - width / 2;
+        property int windowY: Screen.height / 2 - height / 2;
+    }
+
+    //windo on load event
     Component.onCompleted: {
+
+        //load perviously saved settings
+        console.log("Loading settings...")
+        pathPos = settings.pathPos;
+        pathNeg = settings.pathNeg;
+        pathOut = settings.pathOut;
+        numTrain = settings.numTrain;
+        tfNumToTrain.text = numTrain;
+
+
+        setX(settings.windowX);
+        setY(settings.windowY);
+
 
     }
 
+    Component.onDestruction: {
+        settings.pathPos = pathPos;
+        settings.pathNeg = pathNeg;
+        settings.pathOut = pathOut;
+        settings.numTrain = numTrain
+        settings.windowX = mainWindow.x;
+        settings.windowY = mainWindow.y;
+
+        console.log("Settings saved.");
+    }
 
     MainForm {
         id: mainForm;
@@ -59,9 +99,9 @@ Window {
                         textArea.append("POSITIVE folder can not be"
                                         +" the same as NEGATIVE folder!");
 
-                            //invalid again
-                            isValid = false;
-                            return;
+                        //invalid again
+                        isValid = false;
+                        return;
                     }
 
                     rectPos.color = "green";
@@ -104,9 +144,9 @@ Window {
                         textArea.append("NEGATIVE folder can not be"
                                         +" the same as POSITIVE folder!");
 
-                            //invalid again
-                            isValid = false;
-                            return;
+                        //invalid again
+                        isValid = false;
+                        return;
                     }
                     rectNeg.color = "green";
                 } else {
@@ -330,10 +370,10 @@ Window {
                                     var result = cpManager.start();
 
                                     if(result) {
-                                    textArea.append("Training is done. Time "
-                                                    + (new Date().getTime()
-                                                       - startTime)
-                                                    + " ms");
+                                        textArea.append("Training is done. Time "
+                                                        + (new Date().getTime()
+                                                           - startTime)
+                                                        + " ms");
                                     }
                                 }
                             }

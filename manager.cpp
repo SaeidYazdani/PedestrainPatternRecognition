@@ -82,7 +82,7 @@ bool Manager::start()
         BayesianClassifier bcp("positive");
         bcp.setSize(posSize);
         bcp.setType(posType);
-        bcp.createAggregateFromTrainingVector(posResult);
+        bcp.performCalculations(posResult);
 
 
 //        StatisticsCalculator bc;

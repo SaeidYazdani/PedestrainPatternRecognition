@@ -2,8 +2,10 @@
 #define BAYESIANCLASSIFIER_H
 
 #include <QString>
+#include <QDebug>
 
 #include "patrec_types.h"
+#include "statisticscalculator.h"
 #include <opencv2/core/core.hpp>
 
 class BayesianClassifier
@@ -13,7 +15,7 @@ public:
 
     BayesianClassifier(QString className);
 
-    void createAggregateFromTrainingVector(pr::training_vector tv);
+    void performCalculations(pr::training_vector tv);
 
     cv::Size size() const;
     void setSize(const cv::Size &size);
