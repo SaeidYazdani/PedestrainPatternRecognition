@@ -15,10 +15,15 @@ Window {
     property int pathRectsHeight: 50
     property int margin: 10;
 
-    property url pathPos : "";
-    property url pathNeg : "";
-    property url pathOut : "";
+    property url pathPos : "file:///home/saeid/Work/uni-projects/pattern-recog/data/training/pedestrain/18x36";
+    property url pathNeg : "file:///home/saeid/Work/uni-projects/pattern-recog/data/training/non-pedestrain/";
+    property url pathOut : "file:///home/saeid/Work/uni-projects/pattern-recog/data/output/";
     property int numTrain : 0;
+
+    //NOTE this is like form.load event in c#
+    Component.onCompleted: {
+
+    }
 
 
     MainForm {
@@ -371,7 +376,7 @@ Window {
             id:dialogPosPath;
             selectFolder: true; //this will change to work as FolderDialog!
             title: "Please select folder which contains POSITIVE training data";
-            folder: shortcuts.home;
+            folder: pathPos;
 
             onAccepted: {
                 textArea.append("Selecting POSITIVE data folder");
@@ -403,7 +408,7 @@ Window {
             id:dialogNegPath;
             selectFolder: true; //this will change to work as FolderDialog!
             title: "Please select folder which contains NEGATIVE training data";
-            folder: shortcuts.home;
+            folder: pathNeg;
 
             onAccepted: {
                 textArea.append("Selecting NEGATIVE data folder");
@@ -435,7 +440,9 @@ Window {
             id:dialogOutPath;
             selectFolder: true; //this will change to work as FolderDialog!
             title: "Please select OUTPUT folder";
-            folder: shortcuts.home;
+            folder: pathOut;
+
+
 
             onAccepted: {
                 textArea.append("Selecting OUTPUT folder");

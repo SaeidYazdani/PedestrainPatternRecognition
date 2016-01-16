@@ -15,17 +15,25 @@ public:
 
     void createAggregateFromTrainingVector(pr::training_vector tv);
 
-    cv::Mat data() const;
+    cv::Size size() const;
+    void setSize(const cv::Size &size);
+
+    int type() const;
+    void setType(int type);
 
 private:
 
     QString mClassName;
 
+    cv::Size mSize;
+    int mType;
+
     cv::Mat mData;
-    cv::Mat mMatMean;
-    cv::Mat mMatVariance;
-    cv::Mat mMatCovariance;
+    cv::Mat mMean;
+    cv::Mat mVariance;
+    cv::Mat mCovariance;
     cv::Mat mEigenVector;
+    cv::Mat mEigenValues;
 };
 
 #endif // BAYESIANCLASSIFIER_H

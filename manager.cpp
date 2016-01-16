@@ -80,10 +80,9 @@ bool Manager::start()
     if(mMethod == pr::BAYESIAN) {
 
         BayesianClassifier bcp("positive");
+        bcp.setSize(posSize);
+        bcp.setType(posType);
         bcp.createAggregateFromTrainingVector(posResult);
-        pr::showSingleImage("B C P", bcp.data());
-
-
 
 
 //        StatisticsCalculator bc;

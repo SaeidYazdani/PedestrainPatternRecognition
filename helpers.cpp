@@ -5,7 +5,9 @@
 namespace pr {
 
 QString getFileTypeEnumAsQString(pr::FileType fileType) {
+
     switch(fileType) {
+
     case pr::FileType::COMPLETE:
         return QString("COMPLETE");
 
@@ -56,7 +58,10 @@ void showSingleImage(QString file) {
 }
 
 void showSingleImage(QString windowName, cv::Mat mat) {
+
     qDebug() << "Showing " << windowName;
+
+    cv::namedWindow(windowName.toStdString(), cv::WINDOW_NORMAL);
     cv::imshow(windowName.toStdString(), mat);
 }
 

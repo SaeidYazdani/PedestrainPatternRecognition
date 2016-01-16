@@ -111,10 +111,6 @@ void StatisticsCalculator::calculateMeanVector(pr::training_vector *data
 
         [&](const std::vector<uchar>& row)
         {
-            // Use transform overload that takes two input ranges.
-            // Note that colsums is the second input range as well as the output range.
-            // We take each element of the row and add it to the corresponding
-            // element of colsums vector:
             std::transform(row.begin(), row.end(), colSums.begin(), colSums.begin(),
                            [](double d1, double d2) { return d1 + d2; });
         });
