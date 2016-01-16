@@ -1,6 +1,8 @@
-import QtQuick 2.4
+import QtQuick 2.5
 
-Item {
-    width: 400
-    height: 400
+Rectangle {
+    id: mainRect
+
+    width: 800
+    height: 600
 }
