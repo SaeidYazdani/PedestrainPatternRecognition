@@ -5,12 +5,16 @@
 #include <QDate>
 
 #include "manager.h"
-#include "trainer.h"
-#include "patrec_types.h"
+
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    app.setOrganizationName("EMBEDONIX");
+    app.setOrganizationDomain("EMBEDONIX.COM");
+    app.setApplicationVersion("0.0.1 ALPHA");
+    app.setApplicationName("Pedestrain Pattern Recognition");
+
     QQmlApplicationEngine engine;
 
     Manager manager;
