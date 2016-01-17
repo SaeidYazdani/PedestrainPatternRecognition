@@ -52,6 +52,24 @@ void convertVectorToImageAndShow(cv::Size size, int type
     cv::imshow(windowName.toStdString(), out);
 }
 
+void convertVectorToImageAndShow(cv::Size size, int type
+                                 , pr::pixel_vector *vector
+                                 , QString windowName) {
+
+    //NOTE type of the benchmark photos are "16"
+    qDebug() << "Converting MeanVector to Mat of size w=" << size.width
+             << " h=" << size.height << " and type=" << type
+             << "  Vector size=" << vector->size();
+
+    //building a Mat object from vector pointer
+    cv::Mat out = cv::Mat(*vector).reshape(0, size.height);
+    out.convertTo(out, CV_8UC1);
+
+    //show image in window
+    cv::namedWindow(windowName.toStdString(), cv::WINDOW_NORMAL);
+    cv::imshow(windowName.toStdString(), out);
+}
+
 void showSingleImage(QString file) {
     cv::Mat img = cv::imread(file.toStdString());
     cv::imshow(file.toStdString(), img);

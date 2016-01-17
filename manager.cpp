@@ -62,19 +62,20 @@ bool Manager::start()
     pr::training_vector posResult = trainerPositive.performTraining();
     pr::training_vector negResult = trainerNegative.performTraining();
 
+    //FIXME arff generator is disabled for test! enable it later
     //Generate the ARFF file
-    ArffGenerator ag;
-    ag.setImageSize(posSize);
-    ag.setPosVector(&posResult);
-    ag.setNegVector(&negResult);
-    ag.setPath(mOutputPath.toLocalFile());
-    ag.setProjectName(mProjectName);
-    bool result = ag.generateArff(pr::FileType::COMPLETE);
-    result = result & ag.generateArff(pr::FileType::POSITIVE_ONLY);
-    result = result & ag.generateArff(pr::FileType::NEGATIVE_ONLY);
-    if(!result) {
-        qDebug() << "Could not generate ARFF file";
-    }
+//    ArffGenerator ag;
+//    ag.setImageSize(posSize);
+//    ag.setPosVector(&posResult);
+//    ag.setNegVector(&negResult);
+//    ag.setPath(mOutputPath.toLocalFile());
+//    ag.setProjectName(mProjectName);
+//    bool result = ag.generateArff(pr::FileType::COMPLETE);
+//    result = result & ag.generateArff(pr::FileType::POSITIVE_ONLY);
+//    result = result & ag.generateArff(pr::FileType::NEGATIVE_ONLY);
+//    if(!result) {
+//        qDebug() << "Could not generate ARFF file";
+//    }
 
     //calculate mean and variance for baysian
     if(mMethod == pr::BAYESIAN) {
@@ -83,6 +84,8 @@ bool Manager::start()
         bcp.setSize(posSize);
         bcp.setType(posType);
         bcp.performCalculations(posResult);
+        bool result = bcp.isPositive(mPositiveFilesList.at(0));
+        qDebug() << "perlimanry result = " << result;
 
 
 //        StatisticsCalculator bc;

@@ -117,6 +117,10 @@ void convertVectorToImageAndShow(cv::Size size, int type
                                      , pr::double_vector *vector
                                      , QString windowName);
 
+void convertVectorToImageAndShow(cv::Size size, int type
+                                     , pr::pixel_vector *vector
+                                     , QString windowName);
+
 
 /**
  * @brief showSingleImage

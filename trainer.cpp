@@ -86,7 +86,6 @@ pr::training_vector Trainer::performTraining()
     }
 
     for(i = 0; i < mNumToTrain; i++) {
-
         result.push_back(getPixelValues(mFileList->at(i)));
     }
 
@@ -152,7 +151,6 @@ pr::pixel_vector Trainer::getPixelValues(QString file)
             ++pInput;
         }
     }
-
     return pv;
 }
 
