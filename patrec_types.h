@@ -1,6 +1,9 @@
 #ifndef PATREC_TYPES_H
 #define PATREC_TYPES_H
 
+#include <stdio.h>
+#include <iostream>
+
 #include <QString>
 #include <vector>
 
@@ -20,8 +23,10 @@ functions are implemented in helpers.cpp
 //using namespace so we can access enums safely!
 namespace pr {
 
+typedef float KIRE_KHAR_TYPE; //by ostad
+
 /*  TYPES   */
-typedef std::vector<uchar> pixel_vector; //result from pixel values of image
+typedef std::vector<KIRE_KHAR_TYPE> pixel_vector; //result from pixel values of image
 typedef std::vector<pixel_vector> training_vector; //collection of pixel_vector
 
 typedef std::vector<double> double_vector; //for bayeian mean

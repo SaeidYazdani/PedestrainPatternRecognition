@@ -79,6 +79,11 @@ void showSingleImage(QString windowName, cv::Mat mat) {
 
     qDebug() << "Showing " << windowName;
 
+    if(mat.type() != CV_8UC1) {
+        std::cout << "Conversion to CV_8UC1 is necessary for" << windowName.toStdString()
+                  << "Correct display is not guaranteed!" << std::endl;
+    }
+
     cv::namedWindow(windowName.toStdString(), cv::WINDOW_NORMAL);
     cv::imshow(windowName.toStdString(), mat);
 }

@@ -1,6 +1,4 @@
 #include "trainer.h"
-#include "patrec_types.h"
-
 
 Trainer::Trainer(QObject *parent) : QObject(parent)
 {
@@ -75,7 +73,6 @@ pr::training_vector Trainer::performTraining()
              << (mTrainerType == pr::POSITIVE ? "POSITIVE" : "NEGATIVE")
              <<  " training session" << QTime::currentTime().toString();
 
-    //debug
     if(mNumToTrain > mFileList->count()) {
         qWarning() << "Number to train is greater than the list of files"
                  << "So the maximum training will be equal to number of "
@@ -147,7 +144,7 @@ pr::pixel_vector Trainer::getPixelValues(QString file)
         const uchar *pInput = mat.ptr<uchar>(r);
 
         for (int c = 0; c < cols; ++c) {
-            pv.push_back(*pInput);
+            pv.push_back((pr::KIRE_KHAR_TYPE)*pInput);
             ++pInput;
         }
     }
