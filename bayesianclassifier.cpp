@@ -75,9 +75,7 @@ void BayesianClassifier::performCalculations(pr::training_vector tv)
 
     //SHOW COVAR as image
     cv::Mat covarNorm;
-    //cout << mCovariance << endl;
     cv::normalize(mCovariance, covarNorm, 0, 255, NORM_MINMAX, CV_8UC1);
-    //cout << covarNorm << endl;
     pr::showSingleImage(mClassName +  " => NORMALIZED [0,255] COVARIANCE OF SAMPLES", covarNorm);
 
     //Eigenvalues calculations
@@ -87,16 +85,10 @@ void BayesianClassifier::performCalculations(pr::training_vector tv)
     mEigenValues = eigenvals;
     mEigenVector = eigenvector; //B
 
-    //cout << "EIGEN VALUES\t=>\n" << eigenvals << endl;
-    //cout << "EIGEN VECTOR\t=>\n" << eigenvector << endl;
-
     cv::Mat eigenVecTrans;
 
     cv::transpose(mEigenVector, eigenVecTrans);
     mTEigenVector = eigenVecTrans; //BT
-
-    //cout << "EIGEN VECTOR TRANSPOSED\t=>\n" << eigenVecTrans << endl;
-
 }
 
 bool BayesianClassifier::isPositive(QString file)
@@ -104,27 +96,36 @@ bool BayesianClassifier::isPositive(QString file)
     cv::Mat sample = cv::imread(file.toStdString(), CV_LOAD_IMAGE_ANYDEPTH
                                 | CV_LOAD_IMAGE_ANYCOLOR);
 
-    cv::Mat tmp = cv::Mat(1, 648, CV_32FC1);
+    //convert sample to a single row Mat
+    cv::Mat sampleAsRow = cv::Mat(1, 648, CV_32FC1);
     int i,j, k = 0;
     for(i = 0; i < mSize.height; i++) {
         for(j = 0; j < mSize.width; j++) {
-            tmp.at<pr::KIRE_KHAR_TYPE>(0, k) = (pr::KIRE_KHAR_TYPE)sample.at<uchar>(i,j);
+            sampleAsRow.at<pr::KIRE_KHAR_TYPE>(0, k) = (pr::KIRE_KHAR_TYPE)sample.at<uchar>(i,j);
             k++;
         }
     }
 
+    //substract tmp(sample as single row) from mean of samples
     cv::Mat sub;
-    cv::transpose((tmp - mMean), sub);
+    cv::transpose((sampleAsRow - mMean), sub);
 
+#ifdef QT_DEBUG
     cout << "SUB TYPE = " << sub.type() << " SIZE " << sub.size()  << endl;
     cout << "SUBTRACTION RESULT\n" << sub << endl;
+#endif
 
     cv::Mat w = cv::Mat(sub.rows, sub.cols, CV_32FC1);
+
+#ifdef QT_DEBUG
     cout << "W = " << w.type() <<  " SIZE " << w.size()  << endl;
+#endif
 
     w = mTEigenVector * sub;
 
+#ifdef QT_DEBUG
     cout << "MULTIPLICATION RESULT\n" << w << endl;
+#endif
 
     cv::Mat wSquared(w);
     for(i = 0; i < w.rows; i++) {
@@ -133,7 +134,9 @@ bool BayesianClassifier::isPositive(QString file)
         w.at<pr::KIRE_KHAR_TYPE>(0,i) = val;
     }
 
+#ifdef QT_DEBUG
     cout << "SQUARE RESULT\n" << w << endl;
+#endif
 
     return false; //hehehehehhe
 }

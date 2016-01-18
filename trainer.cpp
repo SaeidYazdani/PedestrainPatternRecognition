@@ -75,9 +75,9 @@ pr::training_vector Trainer::performTraining()
 
     if(mNumToTrain > mFileList->count()) {
         qWarning() << "Number to train is greater than the list of files"
-                 << "So the maximum training will be equal to number of "
-                 <<  "available files. mNumToTrain = " << mNumToTrain
-                  << " mFilesList count = " << mFileList->count();
+                   << "So the maximum training will be equal to number of "
+                   <<  "available files. mNumToTrain = " << mNumToTrain
+                   << " mFilesList count = " << mFileList->count();
 
         mNumToTrain = mFileList->count();
     }

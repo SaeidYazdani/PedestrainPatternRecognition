@@ -86,55 +86,6 @@ bool Manager::start()
         bcp.performCalculations(posResult);
         bool result = bcp.isPositive(mPositiveFilesList.at(0));
         qDebug() << "perlimanry result = " << result;
-
-
-//        StatisticsCalculator bc;
-//        bc.setPosVector(&posResult);
-//        bc.setNegVector(&negResult);
-
-//        qDebug() << "Calculating POSITIVE Bayesian Mean vector"
-//                 << QTime::currentTime().toString();
-//        pr::double_vector *posMeanVector = bc.positiveMeanVector();
-//        qDebug() << "showing POSITIVE Bayesian Mean as an image"
-//                 << QTime::currentTime().toString();
-//        //show pos mean vector as image!!
-//        pr::convertVectorToImageAndShow(posSize, posType, posMeanVector
-//                                                 , "POSITIVE MEAN VECTOR");
-
-
-//        qDebug() << "Calculating POSITIVE Bayesian StdDev vector"
-//                 << QTime::currentTime().toString();
-//        pr::double_vector *posStdDevVector = bc.positiveStdDevVector();
-//        qDebug() << "showing POSITIVE Bayesian StdDev as an image"
-//                 << QTime::currentTime().toString();
-//        //show pos std dev vector as image!!
-//        pr::convertVectorToImageAndShow(posSize, posType, posStdDevVector
-//                                                 , "POSITIVE STD DEV VECTOR");
-
-//        qDebug() << "Calculating NEGATIVE Bayesian Mean vector"
-//                 << QTime::currentTime().toString();
-//        pr::double_vector *negMeanVector = bc.negativeMeanVector();
-//        qDebug() << "showing NEGATIVE Bayesian Mean as an image"
-//                 << QTime::currentTime().toString();
-//        //show neg mean vector as image!!
-//        pr::convertVectorToImageAndShow(posSize, posType, negMeanVector
-//                                                 , "NEGATIVE MEAN VECTOR");
-
-
-//        qDebug() << "Calculating NEGATIVE Bayesian StdDev vector"
-//                 << QTime::currentTime().toString();
-//        pr::double_vector *negStdDevVector = bc.negativeStdDevVector();
-//        qDebug() << "showing NEGATIVE Bayesian StdDev as an image"
-//                 << QTime::currentTime().toString();
-//        //show neg std dev vector as image!!
-//        pr::convertVectorToImageAndShow(posSize, posType, negStdDevVector
-//                                                 , "NEGATIVE STD DEV VECTOR");
-
-//        //save vectors
-//        ag.saveSingleVector("positive_mean", posMeanVector);
-//        ag.saveSingleVector("positive_std_dev", posStdDevVector);
-//        ag.saveSingleVector("negative_mean", negMeanVector);
-//        ag.saveSingleVector("negative_std_dev", negStdDevVector);
     }
 
     mState = pr::IDLE;
