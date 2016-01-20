@@ -23,13 +23,21 @@ functions are implemented in helpers.cpp
 //using namespace so we can access enums safely!
 namespace pr {
 
-typedef float KIRE_KHAR_TYPE; //by ostad
+/*  STRUCTS */
+struct NegativeFolder {
+    QString name;
+    int count;
+    QStringList *filesList;
+};
 
 /*  TYPES   */
+typedef float KIRE_KHAR_TYPE; //by ostad
 typedef std::vector<KIRE_KHAR_TYPE> pixel_vector; //result from pixel values of image
 typedef std::vector<pixel_vector> training_vector; //collection of pixel_vector
-
 typedef std::vector<double> double_vector; //for bayeian mean
+typedef std::vector<NegativeFolder> folder_vector;
+
+
 
 
 /**
