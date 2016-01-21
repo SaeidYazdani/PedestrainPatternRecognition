@@ -144,7 +144,7 @@ pr::pixel_vector Trainer::getPixelValues(QString file)
         const uchar *pInput = mat.ptr<uchar>(r);
 
         for (int c = 0; c < cols; ++c) {
-            pv.push_back((pr::KIRE_KHAR_TYPE)*pInput);
+            pv.push_back((pr::MY_FLOAT)*pInput);
             ++pInput;
         }
     }

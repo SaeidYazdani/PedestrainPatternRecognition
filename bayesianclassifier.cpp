@@ -28,6 +28,8 @@ void BayesianClassifier::setType(int type)
     mType = type;
 }
 
+
+
 void BayesianClassifier::performCalculations(pr::training_vector tv)
 {
 
@@ -42,7 +44,7 @@ void BayesianClassifier::performCalculations(pr::training_vector tv)
 
     for (int r = 0; r < rows; ++r) {
 
-        pr::KIRE_KHAR_TYPE *pInput = mat.ptr<pr::KIRE_KHAR_TYPE>(r);
+        pr::MY_FLOAT *pInput = mat.ptr<pr::MY_FLOAT>(r);
 
         for (int c = 0; c < cols; ++c) {
             *pInput = tv.at(r)[c];
@@ -67,7 +69,7 @@ void BayesianClassifier::performCalculations(pr::training_vector tv)
     int i,j, k = 0;
     for(i = 0; i < mSize.height; i++) {
         for(j = 0; j < mSize.width; j++) {
-            meanMatToShow.at<uchar>(i,j) = (uchar) mean.at<pr::KIRE_KHAR_TYPE>(0, k);
+            meanMatToShow.at<uchar>(i,j) = (uchar) mean.at<pr::MY_FLOAT>(0, k);
             k++;
         }
     }
@@ -89,9 +91,31 @@ void BayesianClassifier::performCalculations(pr::training_vector tv)
 
     cv::transpose(mEigenVector, eigenVecTrans);
     mTEigenVector = eigenVecTrans; //BT
+
+//    cout << mCovariance.size() << endl;
+
+//    mDetCovar = cv::determinant(mCovariance);
+
+    cout << "COVARIANCE DETERMINANT = " << mDetCovar << endl;
 }
 
-bool BayesianClassifier::isPositive(QString file)
+pr::result_vector BayesianClassifier::performTest(QStringList files)
+{
+
+    pr::result_vector results;
+    for(int i = 0; i < files.size(); i++) {
+        pr::TestResult tr;
+        tr = isPositive(files.at(i));
+        cout << tr.fileName.toStdString() << "," << tr.q << endl;
+        results.push_back(tr);
+    }
+
+    ostadOrders();
+
+    return results;
+}
+
+pr::TestResult BayesianClassifier::isPositive(QString file)
 {
     cv::Mat sample = cv::imread(file.toStdString(), CV_LOAD_IMAGE_ANYDEPTH
                                 | CV_LOAD_IMAGE_ANYCOLOR);
@@ -101,7 +125,7 @@ bool BayesianClassifier::isPositive(QString file)
     int i,j, k = 0;
     for(i = 0; i < mSize.height; i++) {
         for(j = 0; j < mSize.width; j++) {
-            sampleAsRow.at<pr::KIRE_KHAR_TYPE>(0, k) = (pr::KIRE_KHAR_TYPE)sample.at<uchar>(i,j);
+            sampleAsRow.at<pr::MY_FLOAT>(0, k) = (pr::MY_FLOAT)sample.at<uchar>(i,j);
             k++;
         }
     }
@@ -110,35 +134,68 @@ bool BayesianClassifier::isPositive(QString file)
     cv::Mat sub;
     cv::transpose((sampleAsRow - mMean), sub);
 
-#ifdef QT_DEBUG
-    cout << "SUB TYPE = " << sub.type() << " SIZE " << sub.size()  << endl;
-    cout << "SUBTRACTION RESULT\n" << sub << endl;
-#endif
-
     cv::Mat w = cv::Mat(sub.rows, sub.cols, CV_32FC1);
-
-#ifdef QT_DEBUG
-    cout << "W = " << w.type() <<  " SIZE " << w.size()  << endl;
-#endif
 
     w = mTEigenVector * sub;
 
-#ifdef QT_DEBUG
-    cout << "MULTIPLICATION RESULT\n" << w << endl;
-#endif
+    cv::Mat wSquared(w);
+    for(i = 0; i < w.rows; i++) {
+        pr::MY_FLOAT val = w.at<pr::MY_FLOAT>(0,i);
+        val *= val;
+        w.at<pr::MY_FLOAT>(0,i) = val;
+    }
+
+    pr::MY_FLOAT q = 0;
+    for(i = 0; i < wSquared.rows; i++) {
+        q += wSquared.at<pr::MY_FLOAT>(0, i)
+                / mEigenValues.at<pr::MY_FLOAT>(0,i);
+    }
+
+
+
+    pr::TestResult result;
+
+    result.fileName = file;
+    result.q = q;
+    result.result = false;
+
+    return result;
+}
+
+/**
+ * @brief BayesianClassifier::ostadOrders
+ *
+ * This was ordered by ostad to check mean value :D
+ *
+ * luckly result was o!
+ *
+ */
+void BayesianClassifier::ostadOrders()
+{
+    int i;
+
+    cv::Mat sub;
+    cv::transpose((mMean - mMean), sub);
+
+    cv::Mat w = cv::Mat(sub.rows, sub.cols, CV_32FC1);
+
+    w = mTEigenVector * sub;
 
     cv::Mat wSquared(w);
     for(i = 0; i < w.rows; i++) {
-        pr::KIRE_KHAR_TYPE val = w.at<pr::KIRE_KHAR_TYPE>(0,i);
+        pr::MY_FLOAT val = w.at<pr::MY_FLOAT>(0,i);
         val *= val;
-        w.at<pr::KIRE_KHAR_TYPE>(0,i) = val;
+        w.at<pr::MY_FLOAT>(0,i) = val;
     }
 
-#ifdef QT_DEBUG
-    cout << "SQUARE RESULT\n" << w << endl;
-#endif
+    pr::MY_FLOAT q = 0;
+    for(i = 0; i < wSquared.rows; i++) {
+        q += wSquared.at<pr::MY_FLOAT>(0, i)
+                / mEigenValues.at<pr::MY_FLOAT>(0,i);
+    }
 
-    return false; //hehehehehhe
+    cout << "ostadOrder," << q;
+
+    cout << mEigenValues << endl;
+
 }
-
-

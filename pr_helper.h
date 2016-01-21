@@ -1,27 +1,35 @@
-#ifndef PATREC_TYPES_H
-#define PATREC_TYPES_H
+#ifndef PR_HELPER_H
+#define PR_HELPER_H
 
 #include <stdio.h>
 #include <iostream>
-
-#include <QString>
 #include <vector>
+
+#include <QTime>
+#include <QDateTime>
+#include <QDebug>
+#include <QFile>
+#include <QDir>
+#include <QString>
+#include <QTextStream>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
 
-/*
-Contains data types and static functions for the project.
-
-functions are implemented in helpers.cpp
-*/
-
-
-
-//using namespace so we can access enums safely!
+/**
+ * Contains types and helper functions for pattern recognition!
+ */
 namespace pr {
+
+/*  TYPES   */
+//previously it was named KIRE_KHAR_TYPE and we had to rename it because
+//it was too long!
+typedef float MY_FLOAT; //by ostad to be easily chaned later if necessary
+typedef std::vector<MY_FLOAT> pixel_vector; //result from pixel values of image
+typedef std::vector<pixel_vector> training_vector; //collection of pixel_vector
+typedef std::vector<double> double_vector; //for bayeian mean
 
 /*  STRUCTS */
 struct NegativeFolder {
@@ -30,13 +38,27 @@ struct NegativeFolder {
     QStringList *filesList;
 };
 
-/*  TYPES   */
-typedef float KIRE_KHAR_TYPE; //by ostad
-typedef std::vector<KIRE_KHAR_TYPE> pixel_vector; //result from pixel values of image
-typedef std::vector<pixel_vector> training_vector; //collection of pixel_vector
-typedef std::vector<double> double_vector; //for bayeian mean
-typedef std::vector<NegativeFolder> folder_vector;
+/**
+ * @brief Contains result of a test in classifiers
+ */
+struct TestResult {
+    /**
+     * @brief The image file full path and name of the image
+     */
+    QString fileName;
+    /**
+     * @brief q
+     */
+    pr::MY_FLOAT q;
+    /**
+     * @brief result is/was positive or negative?
+     */
+    bool result;
+    //TODO add a field to contain name of the class which it was most propable
+};
 
+typedef std::vector<NegativeFolder> folder_vector;
+typedef std::vector<TestResult> result_vector;
 
 
 
@@ -150,5 +172,8 @@ void showSingleImage(QString windowName, cv::Mat mat);
 
 void gaussFilter(cv::Mat *src, cv::Mat *dst, cv::Size kernelSize);
 
+bool saveResultVectorAsCVS(result_vector *rv, QString path, QString name
+                           , bool writeFullName = false);
+
 }
-#endif // TRAINER_TYPE_H
+#endif // PR_HELPER_H

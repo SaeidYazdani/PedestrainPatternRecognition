@@ -3,7 +3,7 @@
 
 #include <QDebug>
 
-#include "patrec_types.h"
+#include "pr_helper.h"
 #include <numeric>
 
 #include<opencv2/core/core.hpp>

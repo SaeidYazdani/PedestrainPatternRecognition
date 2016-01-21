@@ -1,6 +1,5 @@
-#include "patrec_types.h"
+#include "pr_helper.h"
 
-#include <QDebug>
 
 namespace pr {
 
@@ -92,5 +91,44 @@ void gaussFilter(cv::Mat *src, cv::Mat *dst, cv::Size kernelSize) {
     //TODO implement this
 }
 
+
+bool saveResultVectorAsCVS(result_vector *rv, QString path, QString name
+                           , bool writeFullPath) {
+
+    QFile file(path.append(QDir::separator()).append(name).append(".cvs"));
+
+    file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+
+    //check if file has been opened
+    if(!file.isOpen()) {
+        qDebug() << "Error opening " << name << " for writing!";
+        return false;
+    }
+
+    QTextStream out(&file);
+    pr::TestResult tr;
+    unsigned int i;
+
+    if(writeFullPath) {
+        for(i = 0; i < rv->size(); i++) {
+            tr = rv->at(i);
+
+            out << i+1 << "," << tr.fileName << "," << tr.q << ","
+                << tr.result << "\n";
+        }
+    } else { //just to save branch instructions :D :D :D :D :O
+        for(i = 0; i < rv->size(); i++) {
+            tr = rv->at(i);
+            out << QFileInfo(tr.fileName).fileName()
+                << "," << tr.q << ","
+                << tr.result << "\n";
+        }
+    }
+
+    out.flush();
+    file.close();
+
+    return true;
+}
 
 }

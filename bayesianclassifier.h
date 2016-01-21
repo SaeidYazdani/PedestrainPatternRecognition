@@ -1,16 +1,16 @@
 #ifndef BAYESIANCLASSIFIER_H
 #define BAYESIANCLASSIFIER_H
 
+#include <iostream>
+
 #include <QString>
 #include <QDebug>
 #include <QFile>
 
-#include "patrec_types.h"
-#include "iostream"
-
-#include "patrec_types.h"
-#include "statisticscalculator.h"
 #include <opencv2/core/core.hpp>
+
+#include "pr_helper.h"
+#include "statisticscalculator.h"
 
 class BayesianClassifier
 {
@@ -20,14 +20,17 @@ public:
     BayesianClassifier(QString className);
 
     void performCalculations(pr::training_vector tv);
-
-    bool isPositive(QString file);
-
     cv::Size size() const;
     void setSize(const cv::Size &size);
 
     int type() const;
     void setType(int type);
+
+    pr::result_vector performTest(QStringList files);
+
+    void ostadOrders();
+
+
 
 private:
 
@@ -41,9 +44,15 @@ private:
     cv::Mat mTMean; //mean transposed
     cv::Mat mVariance;
     cv::Mat mCovariance;
+    cv::Mat mTCovariance;
     cv::Mat mEigenVector;
     cv::Mat mEigenValues;
     cv::Mat mTEigenVector; //eigen vector transposed
+
+    double mDetCovar; //determinan of covariance
+
+    //functions
+    pr::TestResult isPositive(QString files);
 };
 
 #endif // BAYESIANCLASSIFIER_H

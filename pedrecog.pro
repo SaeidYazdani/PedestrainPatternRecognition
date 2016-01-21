@@ -7,10 +7,10 @@ SOURCES += main.cpp \
     trainer.cpp \
     manager.cpp \
     arffgenerator.cpp \
-    helpers.cpp \
     bayesianclassifier.cpp \
     statisticscalculator.cpp \
-    negativefoldersparser.cpp
+    negativefoldersparser.cpp \
+    pr_helper.cpp
 
 RESOURCES += qml.qrc
 
@@ -28,7 +28,7 @@ HEADERS += \
     trainer.h \
     manager.h \
     arffgenerator.h \
-    patrec_types.h \
     bayesianclassifier.h \
     statisticscalculator.h \
-    negativefoldersparser.h
+    negativefoldersparser.h \
+    pr_helper.h

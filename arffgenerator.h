@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-#include "patrec_types.h"
+#include "pr_helper.h"
 
 #include <opencv2/core/core.hpp>
 

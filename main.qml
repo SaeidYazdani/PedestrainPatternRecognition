@@ -19,6 +19,7 @@ Window {
     property url pathPos : "file:///";
     property url pathNeg : "file:///";
     property url pathOut : "file:///";
+    property url pathTest : "file:///";
     property int numTrain : 50;
 
 
@@ -30,6 +31,7 @@ Window {
         property url pathPos: dialogNegPath.shortcuts.home;
         property url pathNeg: dialogNegPath.shortcuts.home;
         property url pathOut: dialogNegPath.shortcuts.home;
+        property url pathTest: dialogNegPath.shortcuts.home;
         property int numTrain: 50;
 
         //application settings
@@ -45,14 +47,13 @@ Window {
         pathPos = settings.pathPos;
         pathNeg = settings.pathNeg;
         pathOut = settings.pathOut;
+        pathTest = settings.pathTest;
         numTrain = settings.numTrain;
         tfNumToTrain.text = numTrain;
 
 
         setX(settings.windowX);
         setY(settings.windowY);
-
-
     }
 
     Component.onDestruction: {
@@ -71,7 +72,7 @@ Window {
 
         //check starting conditions
         function validateInputs() {
-            if(rectPos.isValid && rectNeg.isValid && rectOut.isValid) {
+            if(rectPos.isValid && rectNeg.isValid && rectOut.isValid && rectTest.isValid) {
                 rectStart.validated(true);
             } else {
                 rectStart.validated(false);
@@ -202,10 +203,45 @@ Window {
             }
         }
 
+        //for test images folder
+        Rectangle {
+            id: rectTest;
+
+            x: rectOut.x;
+            y: rectPos.height  + rectNeg.height + rectOut.height + margin + margin / 2;
+            width: parent.width - margin;
+            height: pathRectsHeight - margin;
+            color: "red";
+
+            property bool isValid: false;
+            signal folderSelected
+
+            onFolderSelected:  {
+                if(isValid) {
+                    rectTest.color = "green";
+                } else {
+                    rectTest.color = "red";
+                }
+
+                mainForm.validateInputs();
+            }
+
+            Button {
+                id:buttonTestPath;
+                anchors.centerIn: parent;
+                width: parent.width / 2;
+                text: qsTr("Select TESTS folder");
+
+                onClicked: {
+                    dialogTestPath.open();
+                }
+            }
+        }
+
         Rectangle {
             id: rectOptions;
-            x: rectOut.x;
-            y: rectOut.y + rectOut.height + margin;
+            x: rectTest.x;
+            y: rectTest.y + rectTest.height + margin;
             width: mainForm.width - margin;
             height: (mainForm.height / 4) - margin;
             color: "#600000FF";
@@ -507,5 +543,38 @@ Window {
                 }
             }
         }
+
+        //dialog for test folder
+        FileDialog {
+            id: dialogTestPath;
+            selectFolder: true; //this will change to work as FolderDialog!
+            title: "Please select TEST folder";
+            folder: pathTest;
+
+            onAccepted: {
+                textArea.append("Selecting TEST data folder");
+                pathTest = dialogTestPath.folder;
+                var msg;
+                var result = cpManager.checkDataFolder(pathTest, 2);
+
+                switch(result) {
+                case true:
+                    msg = "\tFolder exist and contains 'pgm' files";
+                    textArea.append(msg);
+                    rectTest.isValid = true;
+                    rectTest.folderSelected();
+                    break;
+
+                case false:
+                    msg = "\tFodler does not exist or does not contain"
+                            + " 'pgm' files";
+                    textArea.append(msg);
+                    rectTest.isValid = false;
+                    rectTest.folderSelected();
+                    break;
+                }
+            }
+        }
+
     }
 }

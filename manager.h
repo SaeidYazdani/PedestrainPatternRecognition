@@ -5,7 +5,7 @@
 #include <QtQml>
 #include <QUrl>
 
-#include "patrec_types.h"
+#include "pr_helper.h"
 #include "trainer.h"
 #include "arffgenerator.h"
 #include "statisticscalculator.h"
@@ -56,11 +56,13 @@ private:
     //folders, files, lists
     QUrl    mPositiveDataPath;
     QUrl    mNegativeDataPath;
+    QUrl    mTestDataPath;
     QUrl    mOutputPath;
     QString mProjectName;
 
     QStringList mPositiveFilesList;
     QStringList mNegativeFilesList;
+    QStringList mTestFilesList;
 
     //options
     pr::TrainingFilters mFilters;
@@ -70,6 +72,7 @@ private:
 
     //functions
     QStringList generateFileList(pr::TrainingType t);
+    QStringList generateTestFileList();
 };
 
 #endif // MANAGER_H

@@ -7,6 +7,10 @@
 
 #include <opencv2/core/core.hpp>
 
+#include <stdio.h>
+#include <iostream>
+
+
 Manager::Manager(QObject *parent) : QObject(parent)
 {
 
@@ -62,20 +66,7 @@ bool Manager::start()
     pr::training_vector posResult = trainerPositive.performTraining();
     pr::training_vector negResult = trainerNegative.performTraining();
 
-    //FIXME arff generator is disabled for test! enable it later
-    //Generate the ARFF file
-//    ArffGenerator ag;
-//    ag.setImageSize(posSize);
-//    ag.setPosVector(&posResult);
-//    ag.setNegVector(&negResult);
-//    ag.setPath(mOutputPath.toLocalFile());
-//    ag.setProjectName(mProjectName);
-//    bool result = ag.generateArff(pr::FileType::COMPLETE);
-//    result = result & ag.generateArff(pr::FileType::POSITIVE_ONLY);
-//    result = result & ag.generateArff(pr::FileType::NEGATIVE_ONLY);
-//    if(!result) {
-//        qDebug() << "Could not generate ARFF file";
-//    }
+
 
     //calculate mean and variance for baysian
     if(mMethod == pr::BAYESIAN) {
@@ -84,9 +75,28 @@ bool Manager::start()
         bcp.setSize(posSize);
         bcp.setType(posType);
         bcp.performCalculations(posResult);
-        bool result = bcp.isPositive(mPositiveFilesList.at(0));
-        qDebug() << "perlimanry result = " << result;
+        mTestFilesList = generateTestFileList();
+        pr::result_vector results = bcp.performTest(mTestFilesList);
+
+        //save result to CVS file
+        pr::saveResultVectorAsCVS(&results, mOutputPath.toLocalFile()
+                                  , mProjectName);
     }
+
+    //FIXME arff generator is disabled for test! enable it later
+    //Generate the ARFF file
+    //    ArffGenerator ag;
+    //    ag.setImageSize(posSize);
+    //    ag.setPosVector(&posResult);
+    //    ag.setNegVector(&negResult);
+    //    ag.setPath(mOutputPath.toLocalFile());
+    //    ag.setProjectName(mProjectName);
+    //    bool result = ag.generateArff(pr::FileType::COMPLETE);
+    //    result = result & ag.generateArff(pr::FileType::POSITIVE_ONLY);
+    //    result = result & ag.generateArff(pr::FileType::NEGATIVE_ONLY);
+    //    if(!result) {
+    //        qDebug() << "Could not generate ARFF file";
+    //    }
 
     mState = pr::IDLE;
 
@@ -143,9 +153,14 @@ bool Manager::checkDataFolder(QUrl folderPath, int whichFolder)
                 mNegativeFilesList = pgmFiles;
                 break;
 
+            case 2: //test data
+                mTestDataPath = folderPath;
+                mTestFilesList = pgmFiles;
+                break;
+
             default:
                 qWarning() << "Invalid folder ID received from QML. send 0 for"
-                         << " POSITIVE check and 1 for NEGATIVE check";
+                           << " POSITIVE check and 1 for NEGATIVE check";
                 return false;
             }
 
@@ -217,7 +232,7 @@ void Manager::setFilters(int filters)
     //in case QML calculated the flag wrong
     if(filters < 0 || filters > 8) {
         qWarning() << "Invalid FILTERS enum received!"
-                 << "NO filter will be used!";
+                   << "NO filter will be used!";
         mFilters = pr::NONE;
         return;
     }
@@ -279,6 +294,26 @@ QStringList Manager::generateFileList(pr::TrainingType t)
     t == pr::POSITIVE
             ? dir = mPositiveDataPath.toLocalFile()
             : dir = mNegativeDataPath.toLocalFile();
+
+
+    QStringList dest;
+    int i;
+    for(i = 0; i < src.count(); i++) {
+        QString file = dir + "/" + src.at(i);
+        dest << file; //adds to list
+    }
+
+    return dest;
+}
+
+QStringList Manager::generateTestFileList() {
+    qDebug() << "Generating list of files for TEST data";
+
+    //set source based on type
+    QStringList src(mTestFilesList);
+
+    //set dir baed on type
+    QString dir(mTestDataPath.toLocalFile());
 
 
     QStringList dest;

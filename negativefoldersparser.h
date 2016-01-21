@@ -3,17 +3,17 @@
 
 #include <QString>
 #include <QUrl>
+#include <QDir>
 
 #include <vector>
 
-#include "patrec_types.h"
+#include "pr_helper.h"
 
 class NegativeFoldersParser
 {
 
 public:
     NegativeFoldersParser(QUrl rootFolder);
-
     pr::folder_vector *getFolders();
 
 private:
