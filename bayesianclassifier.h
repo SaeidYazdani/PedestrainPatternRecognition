@@ -12,6 +12,8 @@
 #include "pr_helper.h"
 #include "statisticscalculator.h"
 
+#define PI_2 6.28318530718
+
 class BayesianClassifier
 {
 
@@ -28,15 +30,13 @@ public:
 
     pr::result_vector performTest(QStringList files);
 
-    void ostadOrders();
-
-
-
 private:
 
     QString mClassName;
 
     cv::Size mSize;
+
+    int mNSpace;
     int mType;
 
     cv::Mat mData;
@@ -50,6 +50,10 @@ private:
     cv::Mat mTEigenVector; //eigen vector transposed
 
     double mDetCovar; //determinan of covariance
+
+    double mLnDet = 0; //ln of determinant
+
+    void calculateLnOfDetOfCovar();
 
     //functions
     pr::TestResult isPositive(QString files);

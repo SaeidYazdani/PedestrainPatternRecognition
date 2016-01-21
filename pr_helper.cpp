@@ -121,6 +121,7 @@ bool saveResultVectorAsCVS(result_vector *rv, QString path, QString name
             tr = rv->at(i);
             out << QFileInfo(tr.fileName).fileName()
                 << "," << tr.q << ","
+                << "," << tr.criterion << ","
                 << tr.result << "\n";
         }
     }

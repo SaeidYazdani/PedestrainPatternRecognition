@@ -51,6 +51,10 @@ struct TestResult {
      */
     pr::MY_FLOAT q;
     /**
+     * @brief Criterion
+     */
+    double criterion;
+    /**
      * @brief result is/was positive or negative?
      */
     bool result;

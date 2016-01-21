@@ -1,5 +1,7 @@
 #include "bayesianclassifier.h"
 
+#include <math.h>
+
 using namespace cv;
 using namespace std;
 
@@ -16,6 +18,7 @@ cv::Size BayesianClassifier::size() const
 void BayesianClassifier::setSize(const cv::Size &size)
 {
     mSize = size;
+    mNSpace = size.height * size.width;
 }
 
 int BayesianClassifier::type() const
@@ -92,16 +95,18 @@ void BayesianClassifier::performCalculations(pr::training_vector tv)
     cv::transpose(mEigenVector, eigenVecTrans);
     mTEigenVector = eigenVecTrans; //BT
 
+    //FIXME this might crash
+    //calculateLnOfDetOfCovar(); // to claculate mLnDet
+
 //    cout << mCovariance.size() << endl;
 
 //    mDetCovar = cv::determinant(mCovariance);
 
-    cout << "COVARIANCE DETERMINANT = " << mDetCovar << endl;
+    //cout << "COVARIANCE DETERMINANT = " << mDetCovar << endl;
 }
 
 pr::result_vector BayesianClassifier::performTest(QStringList files)
 {
-
     pr::result_vector results;
     for(int i = 0; i < files.size(); i++) {
         pr::TestResult tr;
@@ -109,8 +114,6 @@ pr::result_vector BayesianClassifier::performTest(QStringList files)
         cout << tr.fileName.toStdString() << "," << tr.q << endl;
         results.push_back(tr);
     }
-
-    ostadOrders();
 
     return results;
 }
@@ -152,50 +155,29 @@ pr::TestResult BayesianClassifier::isPositive(QString file)
     }
 
 
-
     pr::TestResult result;
-
     result.fileName = file;
     result.q = q;
     result.result = false;
+    //TODO must of the calculation can be converted to constants!!!!
+//    result.criterion =
+//            (-0.5) * (mEigenValues.rows * mEigenValues.cols)
+//            * 1.83787706641 - 0.5 * mLnDet - 0.5 * (double)q;
+
+    result.criterion = 0;
+
+    //ln(2*pi) = 1.83787706641
 
     return result;
 }
 
-/**
- * @brief BayesianClassifier::ostadOrders
- *
- * This was ordered by ostad to check mean value :D
- *
- * luckly result was o!
- *
- */
-void BayesianClassifier::ostadOrders()
+void BayesianClassifier::calculateLnOfDetOfCovar()
 {
-    int i;
+    mLnDet = 0;
 
-    cv::Mat sub;
-    cv::transpose((mMean - mMean), sub);
-
-    cv::Mat w = cv::Mat(sub.rows, sub.cols, CV_32FC1);
-
-    w = mTEigenVector * sub;
-
-    cv::Mat wSquared(w);
-    for(i = 0; i < w.rows; i++) {
-        pr::MY_FLOAT val = w.at<pr::MY_FLOAT>(0,i);
-        val *= val;
-        w.at<pr::MY_FLOAT>(0,i) = val;
+    for(int i = 0; i < mEigenValues.rows; i++) {
+        mLnDet += log(mEigenValues.at<pr::MY_FLOAT>(0,i));
     }
 
-    pr::MY_FLOAT q = 0;
-    for(i = 0; i < wSquared.rows; i++) {
-        q += wSquared.at<pr::MY_FLOAT>(0, i)
-                / mEigenValues.at<pr::MY_FLOAT>(0,i);
-    }
-
-    cout << "ostadOrder," << q;
-
-    cout << mEigenValues << endl;
-
+    cout << "LN det of eigenVals => " << mLnDet << endl;
 }
