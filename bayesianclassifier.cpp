@@ -190,12 +190,12 @@ pr::TestResult BayesianClassifier::isPositiveHog(QString file) {
         initHog[180 + (int)pv.at(i)]++;
     }
 
-    pr::pixel_vector finalHog(36, 0);
+    pr::pixel_vector finalHog(HOG_CHANNEL, 0);
 
     //TODO convert to constants to save cycles
-    for(int i = 0; i < 36; i++) {
-        for(int j = 0; j < 10; j++) {
-            finalHog.at(i) += initHog[i*10+j];
+    for(int i = 0; i < HOG_CHANNEL; i++) {
+        for(int j = 0; j < HOG_BEAN; j++) {
+            finalHog.at(i) += initHog[i*HOG_BEAN+j];
         }
     }
     //done with hog

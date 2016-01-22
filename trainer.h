@@ -18,6 +18,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 
+
+
 class Trainer : public QObject
 {
 

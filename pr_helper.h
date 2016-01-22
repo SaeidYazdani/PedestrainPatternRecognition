@@ -20,6 +20,10 @@
 #define PI 3.14159265359
 #define PI_BY_2 1.57079632679
 
+//FOR HOG
+#define HOG_CHANNEL 72 //72
+#define HOG_BEAN    5  //5
+
 
 /**
  * Contains types and helper functions for pattern recognition!
