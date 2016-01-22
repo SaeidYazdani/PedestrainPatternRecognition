@@ -33,6 +33,8 @@ bool Manager::start()
     if(mFilters & pr::FEATURE)
         c = true;
 
+
+
     //Preparing positive trainer
     Trainer trainerPositive(pr::POSITIVE);
     mPositiveFilesList = generateFileList(pr::POSITIVE);
@@ -69,6 +71,7 @@ bool Manager::start()
 
 
     //calculate mean and variance for baysian
+    //TODO all are Bayesian...options should be GRAYSCALE and HOG
     if(mMethod == pr::BAYESIAN) {
 
         BayesianClassifier bcp("positive");
@@ -81,6 +84,8 @@ bool Manager::start()
         //save result to CVS file
         pr::saveResultVectorAsCVS(&results, mOutputPath.toLocalFile()
                                   , mProjectName);
+    } else if (mMethod == pr::HOG) {
+
     }
 
     //FIXME arff generator is disabled for test! enable it later

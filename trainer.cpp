@@ -1,5 +1,9 @@
 #include "trainer.h"
 
+#include <stdio.h>
+#include <iostream>
+#include <math.h>
+
 Trainer::Trainer(QObject *parent) : QObject(parent)
 {
     //for compatibility with Qt Framework
@@ -111,22 +115,6 @@ pr::pixel_vector Trainer::getPixelValues(QString file)
         }
     }
 
-    /*
-     * TODO here we should do pre filtering...
-     * also each operation should have a function for itself
-     * to avoid long code in this function!
-     */
-    if(mFilterGauss) {
-        //do gauess
-    }
-
-    if(mFilterSobel) {
-        //do sobel
-    }
-
-    if(mFilterFeature) {
-        //feature detection stuff
-    }
 
     //Getting pixel values
 
@@ -148,6 +136,51 @@ pr::pixel_vector Trainer::getPixelValues(QString file)
             ++pInput;
         }
     }
+
+
+    /*
+     * TODO here we should do pre filtering...
+     * also each operation should have a function for itself
+     * to avoid long code in this function!
+     */
+    if(mFilterGauss) {
+        //do gauess
+    }
+
+    if(mFilterSobel) {
+        //do sobel
+        qDebug() << "Performing X and Y sobel on " << file;
+
+        cv::Mat dstX = cv::Mat(rows, cols, CV_32FC1);
+        cv::Mat dstY = cv::Mat(rows, cols, CV_32FC1);
+
+
+        cv::Sobel(mat, dstX, -1, 1, 0, 3);
+        cv::Sobel(mat, dstY, -1, 0, 1, 3);
+
+        //THIS IS THE ONLY THING WE LEARNT FROM RDSP-2 UBUNGS!!!!
+        for (int r = 0; r < rows; ++r) {
+            //pointer for pixels
+            const uchar *pInput = mat.ptr<uchar>(r);
+
+            for (int c = 0; c < cols; ++c) {
+                pv.push_back((pr::MY_FLOAT)*pInput);
+                ++pInput;
+            }
+        }
+
+
+
+
+
+    }
+
+    if(mFilterFeature) {
+        //feature detection stuff
+    }
+
+
+
     return pv;
 }
 
