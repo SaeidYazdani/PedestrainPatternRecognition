@@ -60,7 +60,8 @@ Window {
         settings.pathPos = pathPos;
         settings.pathNeg = pathNeg;
         settings.pathOut = pathOut;
-        settings.numTrain = numTrain
+        settings.pathTest = pathTest;
+        settings.numTrain = parseInt(tfNumToTrain.text);
         settings.windowX = mainWindow.x;
         settings.windowY = mainWindow.y;
 
