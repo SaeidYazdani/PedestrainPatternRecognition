@@ -147,29 +147,70 @@ pr::pixel_vector Trainer::getPixelValues(QString file)
         //do gauess
     }
 
-    if(mFilterSobel) {
+    if(mTrainerType == pr::HOG && mFilterSobel) {
         //do sobel
         qDebug() << "Performing X and Y sobel on " << file;
 
         cv::Mat dstX = cv::Mat(rows, cols, CV_32FC1);
         cv::Mat dstY = cv::Mat(rows, cols, CV_32FC1);
+        cv::Mat matFlaot;
+
+        mat.convertTo(matFlaot, CV_32FC1);
 
 
-        cv::Sobel(mat, dstX, -1, 1, 0, 3);
-        cv::Sobel(mat, dstY, -1, 0, 1, 3);
+        std::cout << "matFloat BEFORE SOBEL = " << dstX.type();
+        std::cout << "dstX BEFORE SOBEL = " << dstX.type();
 
-        //THIS IS THE ONLY THING WE LEARNT FROM RDSP-2 UBUNGS!!!!
-        for (int r = 0; r < rows; ++r) {
-            //pointer for pixels
-            const uchar *pInput = mat.ptr<uchar>(r);
+        cv::Sobel(matFlaot, dstX, -1, 1, 0, 3);
+        cv::Sobel(matFlaot, dstY, -1, 0, 1, 3);
 
-            for (int c = 0; c < cols; ++c) {
-                pv.push_back((pr::MY_FLOAT)*pInput);
-                ++pInput;
-            }
-        }
+        std::cout << "matFloat AFTER SOBEL = " << dstX.type();
+        std::cout << "dstX AFTER SOBEL = " << dstX.type();
 
 
+//        if (mat.isContinuous() && dstX.isContinuous() && dstY.isContinuous()) {
+//            cols = rows*cols;
+//            rows = 1;
+//        }
+
+
+        pv.clear();
+
+
+        //std::cout << "MAT\n" << mat << std::endl;
+        std::cout << "X\n" << dstX << std::endl;
+        std::cout << "Y\n" << dstY << std::endl;
+
+//        for (int r = 0; r < rows; ++r) {
+//            //pointer for pixels
+//            const uchar *pInput = mat.ptr<uchar>(r);
+//            uchar *xInput = dstX.ptr<uchar>(r);
+//            uchar *yInput = dstY.ptr<uchar>(r);
+
+//            for (int c = 0; c < cols; ++c) {
+//                if(*xInput >= 0) {
+
+//                if(*xInput != 0) {
+//                    pv.push_back((pr::MY_FLOAT)(*yInput / *xInput));
+//                } else if(*yInput != 0) {
+
+//                    if(*yInput > 0 ) {
+//                        pv.push_back(PI_BY_2);
+//                    }
+//                }
+
+//                } else {
+
+//                }
+//                ++pInput;
+//            }
+//        }
+
+
+
+        cv::waitKey(5000);
+
+        return pv;
 
 
 

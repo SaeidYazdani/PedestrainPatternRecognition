@@ -17,6 +17,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#define PI_BY_2 1.57079632679
+
 
 /**
  * Contains types and helper functions for pattern recognition!
