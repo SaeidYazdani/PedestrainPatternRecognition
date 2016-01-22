@@ -1,6 +1,10 @@
 #ifndef TRAINER_H
 #define TRAINER_H
 
+#include <stdio.h>
+#include <iostream>
+#include <math.h>
+
 #include <QObject>
 #include <QDebug>
 #include <QTime>
@@ -42,7 +46,9 @@ public:
      * @param file the file to load
      * @return pointer to beggining of result int array
      */
-    pr::pixel_vector getPixelValues(QString file);
+    pr::pixel_vector getGrayscaleFeature(QString file);
+
+    pr::pixel_vector getHogFeature(QString file);
 
     //SETTERS
 
@@ -99,9 +105,13 @@ public:
     cv::Size getRequiredSize() const;
     void setRequiredSize(const cv::Size &requiredSize);
 
+    pr::TrainingMethod getTrainingMethod() const;
+    void setTrainingMethod(const pr::TrainingMethod &trainingMethod);
+
 private:
     /*  MEMBERS */
     pr::TrainingType mTrainerType;
+    pr::TrainingMethod  mTrainingMethod;
     pr::SizeMode mSizeMode;
     QStringList *mFileList;
 

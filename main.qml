@@ -270,7 +270,7 @@ Window {
                         height: parent.height;
 
                         Label { text: "#Images to train" }
-                        Label { text: "Training Method" }
+                        Label { text: "Training Feature" }
                         Label { text: "Pre Filtering" }
                         Label { text: "Size Mode" }
 
@@ -289,7 +289,7 @@ Window {
                                 right: tfNumToTrain.right
                             }
 
-                            model: ["BAYESIAN", "HAG", "EXTRA"];
+                            model: ["GRAYSCALE", "HOG", "EXTRA"];
                         }
 
                         Row {
@@ -400,6 +400,7 @@ Window {
 
                                     //send other options
                                     cpManager.setSizeMode(coboSizeMode.currentIndex);
+                                    cpManager.setMethod(coboType.currentIndex);
                                     cpManager.setOutputFileName(tfProjectName.text);
                                     cpManager.setNumberOfImagesToTrain(tfNumToTrain.text.trim());
 

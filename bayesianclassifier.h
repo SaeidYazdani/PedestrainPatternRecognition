@@ -19,7 +19,7 @@ class BayesianClassifier
 
 public:
 
-    BayesianClassifier(QString className);
+    BayesianClassifier(QString className, pr::TrainingMethod method);
 
     void performCalculations(pr::training_vector tv);
     cv::Size size() const;
@@ -30,9 +30,13 @@ public:
 
     pr::result_vector performTest(QStringList files);
 
+    pr::TrainingMethod trainingMethod() const;
+
 private:
 
     QString mClassName;
+
+    pr::TrainingMethod mTrainingMethod;
 
     cv::Size mSize;
 
@@ -56,7 +60,8 @@ private:
     void calculateLnOfDetOfCovar();
 
     //functions
-    pr::TestResult isPositive(QString files);
+    pr::TestResult isPositiveGrayScale(QString files);
+    pr::TestResult isPositiveHog(QString file);
 };
 
 #endif // BAYESIANCLASSIFIER_H

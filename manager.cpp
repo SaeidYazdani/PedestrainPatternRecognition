@@ -34,9 +34,9 @@ bool Manager::start()
         c = true;
 
 
-
     //Preparing positive trainer
     Trainer trainerPositive(pr::POSITIVE);
+    trainerPositive.setTrainingMethod(mMethod);
     mPositiveFilesList = generateFileList(pr::POSITIVE);
     trainerPositive.setFileList(&mPositiveFilesList);
     trainerPositive.setFilters(a, b, c);
@@ -56,6 +56,7 @@ bool Manager::start()
 
     //Preparing negative trainer
     Trainer trainerNegative(pr::NEGATIVE);
+    trainerPositive.setTrainingMethod(mMethod);
     mNegativeFilesList = generateFileList(pr::NEGATIVE);
     trainerNegative.setFileList(&mNegativeFilesList);
     trainerNegative.setFilters(a, b, c);
@@ -68,13 +69,11 @@ bool Manager::start()
     pr::training_vector posResult = trainerPositive.performTraining();
     pr::training_vector negResult = trainerNegative.performTraining();
 
-
-
     //calculate mean and variance for baysian
     //TODO all are Bayesian...options should be GRAYSCALE and HOG
-    if(mMethod == pr::BAYESIAN) {
+    if(mMethod == pr::GRAYSCALE) {   /**     GRAYSCALE       **/
 
-        BayesianClassifier bcp("positive");
+        BayesianClassifier bcp("positive", mMethod);
         bcp.setSize(posSize);
         bcp.setType(posType);
         bcp.performCalculations(posResult);
@@ -84,7 +83,19 @@ bool Manager::start()
         //save result to CVS file
         pr::saveResultVectorAsCVS(&results, mOutputPath.toLocalFile()
                                   , mProjectName);
-    } else if (mMethod == pr::HOG) {
+
+    } else if (mMethod == pr::HOG) { /**    HOG     **/
+
+        BayesianClassifier bcp("positive", mMethod);
+        bcp.setSize(posSize);
+        bcp.setType(posType);
+        bcp.performCalculations(posResult);
+        mTestFilesList = generateTestFileList();
+        pr::result_vector results = bcp.performTest(mTestFilesList);
+
+        //save result to CVS file
+        pr::saveResultVectorAsCVS(&results, mOutputPath.toLocalFile()
+                                  , mProjectName);
 
     }
 

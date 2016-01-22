@@ -17,6 +17,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#define PI 3.14159265359
 #define PI_BY_2 1.57079632679
 
 
@@ -49,6 +50,10 @@ struct TestResult {
      */
     QString fileName;
     /**
+     * @brief Type of the used feature vector
+     */
+    QString featureVectorName;
+    /**
      * @brief q
      */
     pr::MY_FLOAT q;
@@ -80,7 +85,7 @@ enum TrainingType {
  * @brief The TrainingMethod enum
  */
 enum TrainingMethod {
-    BAYESIAN,
+    GRAYSCALE,
     HOG,
     EXTRA
 };
@@ -131,6 +136,8 @@ enum FileType {
  * @return
  */
 QString getFileTypeEnumAsQString(pr::FileType fileType);
+
+QString getTrainingMethodAsString(pr::TrainingMethod tm);
 
 
 /**

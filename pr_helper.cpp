@@ -119,9 +119,10 @@ bool saveResultVectorAsCVS(result_vector *rv, QString path, QString name
     } else { //just to save branch instructions :D :D :D :D :O
         for(i = 0; i < rv->size(); i++) {
             tr = rv->at(i);
-            out << QFileInfo(tr.fileName).fileName()
-                << "," << tr.q << ","
-                << "," << tr.criterion << ","
+            out << QFileInfo(tr.fileName).fileName() << ","
+                << tr.featureVectorName << ","
+                << tr.q << ","
+                << tr.criterion << ","
                 << tr.result << "\n";
         }
     }
@@ -130,6 +131,24 @@ bool saveResultVectorAsCVS(result_vector *rv, QString path, QString name
     file.close();
 
     return true;
+}
+
+QString getTrainingMethodAsString(TrainingMethod tm)
+{
+    QString ret;
+    switch(tm) {
+    case pr::GRAYSCALE:
+        ret = "GRAYSCALE";
+        break;
+    case pr::HOG:
+        ret = "HOG";
+        break;
+    case pr::EXTRA:
+        ret = "EXTRA";
+        break;
+    }
+
+    return ret;
 }
 
 }
