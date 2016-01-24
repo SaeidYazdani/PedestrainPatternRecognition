@@ -73,6 +73,35 @@ struct RoiRect {
             cvRect.width = w;
             cvRect.height = h;
     }
+
+    /*
+ Rect shrinkRect(Rect rect, int width_percent, int height_percent)
+{
+    if (width_percent > 100) width_percent = 100;
+    if (height_percent > 100) height_percent = 100;
+
+    Rect newrect;
+    newrect.width = (rect.width * width_percent) / 100;
+    newrect.height = (rect.height * height_percent) / 100;
+    newrect.x = rect.x + (rect.width - newrect.width) / 2;
+    newrect.y = rect.y + (rect.height - newrect.height) / 2;
+
+    return newrect;
+}
+
+
+usage: lets say you have a Rect r = Rect(0,0,100,100)
+
+you want to shrink your rect %20
+
+Rect shrinkedRect = shrinkRect(r, 80, 80)
+shrinkedRect is (10,10,80,80)
+
+you can give different values for width_percent and height_percent
+
+
+
+      */
 };
 
 /**
