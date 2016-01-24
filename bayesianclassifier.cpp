@@ -42,6 +42,11 @@ pr::TrainingMethod BayesianClassifier::trainingMethod() const
 
 void BayesianClassifier::performCalculations(pr::training_vector tv)
 {
+    mData.release();
+    mCovariance.release();
+    mMean.release();
+    mEigenValues.release();
+    mEigenVector.release();
 
     qDebug() << "Size of training vector " << tv.size() <<  "x"
              << tv.at(0).size();

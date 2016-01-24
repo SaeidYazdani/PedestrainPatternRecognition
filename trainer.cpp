@@ -229,7 +229,7 @@ pr::pixel_vector Trainer::getHogFeature(QString file)
     //initializing hog for 0 to 360
     unsigned int initHog[360] = {0}; //important to be inited with 0!!!
 
-    //increment occuring degrees
+    //increment occuring degrees at theire respective index
     for(unsigned int i = 0; i < pv.size(); i++) {
         initHog[180 + (int)pv.at(i)]++;
     }
@@ -237,7 +237,6 @@ pr::pixel_vector Trainer::getHogFeature(QString file)
     pr::pixel_vector finalHog(HOG_CHANNEL, 0);
 
 
-    //TODO convert to constants to save cycles
     for(int i = 0; i < HOG_CHANNEL; i++) {
         for(int j = 0; j < HOG_BEAN; j++) {
             finalHog.at(i) += initHog[i*HOG_BEAN+j];

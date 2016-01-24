@@ -209,7 +209,7 @@ Window {
             id: rectTest;
 
             x: rectOut.x;
-            y: rectPos.height  + rectNeg.height + rectOut.height + margin + margin / 2;
+            y: rectPos.height  + rectNeg.height + rectOut.height + margin * 2;
             width: parent.width - margin;
             height: pathRectsHeight - margin;
             color: "red";
@@ -270,7 +270,7 @@ Window {
                         height: parent.height;
 
                         Label { text: "#Images to train" }
-                        Label { text: "Training Feature" }
+                        Label { text: "Feature Vector" }
                         Label { text: "Pre Filtering" }
                         Label { text: "Size Mode" }
 
@@ -290,6 +290,17 @@ Window {
                             }
 
                             model: ["GRAYSCALE", "HOG", "EXTRA"];
+
+                            onActivated:  {
+                                triggerCheckboxes();
+                            }
+
+                            //if HOG selected, sobel must be checked!!
+                            function triggerCheckboxes() {
+                                if(currentText === "HOG") {
+                                    cbSobel.checked = true;
+                                }
+                            }
                         }
 
                         Row {
@@ -305,6 +316,15 @@ Window {
                                 id: cbSobel
                                 text: "SOBEL"
                                 checked: false;
+
+                                //if type is HOG, this must be checked so
+                                //the handler below will make sure it remains
+                                //checked even if user does not want to!
+                                onCheckedChanged: {
+                                    if(coboType === "HOG") {
+                                        checked = true;
+                                    }
+                                }
                             }
 
                             CheckBox {
