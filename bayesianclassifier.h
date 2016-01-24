@@ -32,6 +32,12 @@ public:
 
     pr::TrainingMethod trainingMethod() const;
 
+    bool shouldCrop() const;
+    void setShouldCrop(bool shouldCrop);
+
+    cv::Rect roi() const;
+    void setRoi(const cv::Rect &roi);
+
 private:
 
     QString mClassName;
@@ -42,6 +48,9 @@ private:
 
     int mNSpace;
     int mType;
+
+    cv::Rect mRoi;
+    bool mShouldCrop;
 
     cv::Mat mData;
     cv::Mat mMean;
@@ -54,12 +63,12 @@ private:
     cv::Mat mTEigenVector; //eigen vector transposed
 
     double mDetCovar; //determinan of covariance
-
     double mLnDet = 0; //ln of determinant
 
-    void calculateLnOfDetOfCovar();
+
 
     //functions
+    void calculateLnOfDetOfCovar();
     pr::TestResult isPositiveGrayScale(QString files);
     pr::TestResult isPositiveHog(QString file);
 };

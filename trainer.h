@@ -17,9 +17,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-
-
-
 class Trainer : public QObject
 {
 
@@ -110,6 +107,13 @@ public:
     pr::TrainingMethod getTrainingMethod() const;
     void setTrainingMethod(const pr::TrainingMethod &trainingMethod);
 
+    pr::RoiRect getRoiRect() const;
+    void setRoiRect(const pr::RoiRect &roiRect);
+
+    bool getShouldCrop() const;
+
+    cv::Rect getCvRect() const;
+
 private:
     /*  MEMBERS */
     pr::TrainingType mTrainerType;
@@ -119,7 +123,10 @@ private:
 
     int mNumToTrain;
     bool mFilterGauss, mFilterSobel, mFilterFeature;
+    pr::RoiRect mRoiRect;
+    cv::Rect mCvRect;
     cv::Size mRequiredSize;
+    bool mShouldCrop = false; //fuckin c++ does not initialize shits
 
 
     /*  FUNCTIONS   */

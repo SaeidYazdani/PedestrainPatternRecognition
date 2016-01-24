@@ -74,15 +74,48 @@ void Trainer::setTrainingMethod(const pr::TrainingMethod &trainingMethod)
     mTrainingMethod = trainingMethod;
 }
 
+pr::RoiRect Trainer::getRoiRect() const
+{
+    return mRoiRect;
+}
+
+void Trainer::setRoiRect(const pr::RoiRect &roiRect)
+{
+    mRoiRect = roiRect;
+}
+
+bool Trainer::getShouldCrop() const
+{
+    return mShouldCrop;
+}
+
+cv::Rect Trainer::getCvRect() const
+{
+    return mCvRect;
+}
+
 pr::training_vector Trainer::performTraining()
 {
     pr::training_vector result;
     int i;
+
+
     
     qDebug() << "Starting "
              << (mTrainerType == pr::POSITIVE ? "POSITIVE" : "NEGATIVE")
              << " Using" << pr::getTrainingMethodAsString(mTrainingMethod)
              <<  " training session" << QTime::currentTime().toString();
+
+    //check if cropping was requested or not
+    if(!mRoiRect.isAllZero()) {
+        mShouldCrop = true;
+        mRoiRect.getCvRect(mRequiredSize, mCvRect);
+
+        qDebug() << "ROI Percentages are set. the images will be cropped for "
+               << "generation of feature vectors Images will be "
+               << mCvRect.width << "x" << mCvRect.height;
+
+    }
 
     if(mNumToTrain > mFileList->count()) {
         qWarning() << "Number to train is greater than the list of files"
@@ -122,6 +155,7 @@ pr::pixel_vector Trainer::getGrayscaleFeature(QString file)
     cv::Mat mat = cv::imread(file.toStdString(), CV_LOAD_IMAGE_ANYDEPTH
                              | CV_LOAD_IMAGE_ANYCOLOR);
 
+
     //check if resizing is required, do if necessary
     if(mTrainerType == pr::NEGATIVE) { //only in negative mode
         if(mat.size() != mRequiredSize) { //if size is different
@@ -134,13 +168,16 @@ pr::pixel_vector Trainer::getGrayscaleFeature(QString file)
         }
     }
 
+    if(mShouldCrop) {
+        cv::Mat cropped = mat(mCvRect);
+        mat = cv::Mat(cropped);
+    }
+
     if(mFilterGauss) {
         //do gauss
     }
 
-    if(mFilterSobel) {
-        //do sobel
-    }
+    //NOTE: We do not do SOBEL for grayscale feature vector
 
     if(mFilterFeature) {
         //do feature (this is just a place holder....
@@ -176,6 +213,8 @@ pr::pixel_vector Trainer::getHogFeature(QString file)
     cv::Mat mat = cv::imread(file.toStdString(), CV_LOAD_IMAGE_ANYDEPTH
                              | CV_LOAD_IMAGE_ANYCOLOR);
 
+
+
     //check if resizing is required, do if necessary
     if(mTrainerType == pr::NEGATIVE) { //only in negative mode
         if(mat.size() != mRequiredSize) { //if size is different
@@ -186,6 +225,11 @@ pr::pixel_vector Trainer::getHogFeature(QString file)
                 //TODO implement window resizing mode
             }
         }
+    }
+
+    if(mShouldCrop) { //crop if neededz
+        cv::Mat cropped = mat(mCvRect);
+        mat = cv::Mat(cropped);
     }
 
     int rows = mat.rows;
@@ -208,7 +252,6 @@ pr::pixel_vector Trainer::getHogFeature(QString file)
         cols = rows*cols;
         rows = 1;
     }
-
 
     //get feature degrees
     for (int r = 0; r < rows; ++r) {

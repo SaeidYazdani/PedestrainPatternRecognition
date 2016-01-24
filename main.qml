@@ -244,7 +244,7 @@ Window {
             x: rectTest.x;
             y: rectTest.y + rectTest.height + margin;
             width: mainForm.width - margin;
-            height: (mainForm.height / 4) - margin;
+            height: (mainForm.height / 3) - margin;
             color: "#600000FF";
 
             /** BEGIN TEST  **/
@@ -263,7 +263,7 @@ Window {
 
                     GridLayout {
                         id: gridLayout
-                        rows: 4
+                        rows: 5
                         columns: 2;
                         flow: GridLayout.TopToBottom
                         width: parent.width;
@@ -273,6 +273,7 @@ Window {
                         Label { text: "Feature Vector" }
                         Label { text: "Pre Filtering" }
                         Label { text: "Size Mode" }
+                        Label { text: "ROI in % L,T,R,B" }
 
                         TextField {
                             id: tfNumToTrain
@@ -343,6 +344,52 @@ Window {
 
                             model: ["RESIZE","WINDOW"];
                         }
+
+                        Row{
+
+                            width: coboSizeMode.width;
+                            anchors.right: parent.right
+
+                            TextField {
+                                id: tfRoiLeft
+                                width: parent.width / 4;
+                                inputMask: "09"
+                                maximumLength: 2;
+                                text: qsTr("0");
+                                //only allow values between 0 and 45
+                                validator: IntValidator {bottom: 0; top:45}
+                            }
+
+                            TextField {
+                                id: tfRoiTop
+                                width: parent.width / 4;
+                                inputMask: "09"
+                                maximumLength: 2;
+                                text: qsTr("0");
+                                //only allow values between 0 and 45
+                                validator: IntValidator {bottom: 0; top:45}
+                            }
+
+                            TextField {
+                                id: tfRoiRight
+                                width: parent.width / 4;
+                                inputMask: "09"
+                                maximumLength: 2;
+                                text: qsTr("0");
+                                //only allow values between 0 and 45
+                                validator: IntValidator {bottom: 0; top:45}
+                            }
+
+                            TextField {
+                                id: tfRoiBottom
+                                width: parent.width / 4;
+                                inputMask: "09"
+                                maximumLength: 2;
+                                text: qsTr("0");
+                                //only allow values between 0 and 45
+                                validator: IntValidator {bottom: 0; top:45}
+                            }
+                        }
                     }
                 }
 
@@ -364,13 +411,11 @@ Window {
                             spacing: 5;
 
 
-                            Label {
-                                text: "Project Name";
-                            }
+                            Label { text: "Project Name"; }
 
                             TextField {
-
                                 id: tfProjectName
+
                                 validator: RegExpValidator {
                                     regExp: /^[-\w^&'@{}[\],$=!#().%+~ ]+$/
                                 }
@@ -423,6 +468,12 @@ Window {
                                     cpManager.setMethod(coboType.currentIndex);
                                     cpManager.setOutputFileName(tfProjectName.text);
                                     cpManager.setNumberOfImagesToTrain(tfNumToTrain.text.trim());
+                                    cpManager.setRoiRect(tfRoiLeft.text.trim()
+                                                         ,tfRoiTop.text.trim()
+                                                         ,tfRoiRight.text.trim()
+                                                         ,tfRoiBottom.text.trim());
+
+
 
                                     var startTime = new Date().getTime();
                                     var result = cpManager.start();
@@ -450,7 +501,7 @@ Window {
             x: rectPos.x
             y: rectOptions.y + rectOptions.height + margin;
 
-            height: mainForm.height - (rectPos.height + rectNeg.height + rectOut.height + rectOptions.height) - margin * 4;
+            height: mainForm.height - (rectPos.height + rectNeg.height + rectOut.height + rectTest.height + rectOptions.height) - margin * 4;
             width: parent.width - 10;
             color: "blue"
 
@@ -539,8 +590,6 @@ Window {
             selectFolder: true; //this will change to work as FolderDialog!
             title: "Please select OUTPUT folder";
             folder: pathOut;
-
-
 
             onAccepted: {
                 textArea.append("Selecting OUTPUT folder");

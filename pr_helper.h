@@ -45,6 +45,36 @@ struct NegativeFolder {
     QStringList *filesList;
 };
 
+struct RoiRect {
+    unsigned int left;
+    unsigned int top;
+    unsigned int right;
+    unsigned int bottom;
+
+    bool isAllZero() {
+        return left == 0 && top == 0 && left == 0 && bottom == 0;
+    }
+
+    /**
+     * @brief convert the percentages based on Size to cv::Rect
+     * @return
+     */
+    void getCvRect(cv::Size cvSize, cv::Rect &cvRect) {
+            int height = cvSize.height;
+            int width = cvSize.width;
+
+            int x = ((double) left / 100) * width;
+            int y = ((double) top / 100) * height;
+            int w = (width - ((double) right / 100) * width) - x;
+            int h = height - (((double) bottom / 100) * width) - y;
+
+            cvRect.x = x;
+            cvRect.y = y;
+            cvRect.width = w;
+            cvRect.height = h;
+    }
+};
+
 /**
  * @brief Contains result of a test in classifiers
  */

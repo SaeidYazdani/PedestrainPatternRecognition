@@ -120,8 +120,8 @@ bool saveResultVectorAsCVS(result_vector *rv, QString path, QString name
         for(i = 0; i < rv->size(); i++) {
             tr = rv->at(i);
             out << QFileInfo(tr.fileName).fileName() << ","
-                << tr.featureVectorName << ","
                 << tr.q << ","
+                << tr.featureVectorName << ","
                 << tr.criterion << ","
                 << tr.result << "\n";
         }

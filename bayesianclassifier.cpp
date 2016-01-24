@@ -38,6 +38,26 @@ pr::TrainingMethod BayesianClassifier::trainingMethod() const
     return mTrainingMethod;
 }
 
+bool BayesianClassifier::shouldCrop() const
+{
+    return mShouldCrop;
+}
+
+void BayesianClassifier::setShouldCrop(bool shouldCrop)
+{
+    mShouldCrop = shouldCrop;
+}
+
+cv::Rect BayesianClassifier::roi() const
+{
+    return mRoi;
+}
+
+void BayesianClassifier::setRoi(const cv::Rect &roi)
+{
+    mRoi = roi;
+}
+
 
 
 void BayesianClassifier::performCalculations(pr::training_vector tv)
@@ -112,7 +132,6 @@ void BayesianClassifier::performCalculations(pr::training_vector tv)
     cv::transpose(mEigenVector, eigenVecTrans);
     mTEigenVector = eigenVecTrans; //BT
 
-    cout << "MEAN FOR OSTAD\n" << mean << endl;
 }
 
 
@@ -265,8 +284,14 @@ pr::TestResult BayesianClassifier::isPositiveGrayScale(QString file)
     cv::Mat sample = cv::imread(file.toStdString(), CV_LOAD_IMAGE_ANYDEPTH
                                 | CV_LOAD_IMAGE_ANYCOLOR);
 
+
+    if(mShouldCrop) {
+        cv::Mat cropped = sample(mRoi);
+        sample = cv::Mat(cropped);
+    }
+
     //convert sample to a single row Mat
-    cv::Mat sampleAsRow = cv::Mat(1, 648, CV_32FC1);
+    cv::Mat sampleAsRow = cv::Mat(1, sample.rows * sample.cols, CV_32FC1);
     int i,j, k = 0;
     for(i = 0; i < mSize.height; i++) {
         for(j = 0; j < mSize.width; j++) {

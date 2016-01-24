@@ -31,6 +31,7 @@ public:
     QString convertToFilePath(QUrl url, QString name);
     pr::SizeMode sizeMode() const;
     QString outputFileName() const;
+    pr::RoiRect roiRect() const;
 
 signals:
 
@@ -45,6 +46,7 @@ public slots:
     void setFilters(int filters);
     void setSizeMode(int mode);
     void setOutputFileName(QString name);
+    void setRoiRect(QString l, QString t, QString r, QString b);
 
 
 private:
@@ -69,6 +71,7 @@ private:
     pr::TrainingMethod mMethod;
     pr::SizeMode mSizeMode;
     int mNumberOfImagesToTrain;
+    pr::RoiRect mRoiRect;
 
     //functions
     QStringList generateFileList(pr::TrainingType t);

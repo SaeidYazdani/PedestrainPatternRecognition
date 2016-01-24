@@ -12,8 +12,8 @@
 
 
 Manager::Manager(QObject *parent) : QObject(parent)
-{
-
+{    
+    mRoiRect.left = mRoiRect.top = mRoiRect.right = mRoiRect.bottom = 0;
 }
 
 bool Manager::start()
@@ -33,14 +33,10 @@ bool Manager::start()
     if(mFilters & pr::FEATURE)
         c = true;
 
-
-    //Preparing positive trainer
-    Trainer trainerPositive(pr::POSITIVE);
-    trainerPositive.setTrainingMethod(mMethod);
+    //genrate list of files
     mPositiveFilesList = generateFileList(pr::POSITIVE);
-    trainerPositive.setFileList(&mPositiveFilesList);
-    trainerPositive.setFilters(a, b, c);
-    trainerPositive.setNumToTrain(mNumberOfImagesToTrain);
+    mNegativeFilesList = generateFileList(pr::NEGATIVE);
+
 
     //get the size of one of positive files
     //because for negative files we need to have same size
@@ -54,15 +50,25 @@ bool Manager::start()
              << "height = " << posSize.height;
 
 
+    //Preparing positive trainer
+    Trainer trainerPositive(pr::POSITIVE);
+    trainerPositive.setTrainingMethod(mMethod);
+    trainerPositive.setFileList(&mPositiveFilesList);
+    trainerPositive.setFilters(a, b, c);
+    trainerPositive.setNumToTrain(mNumberOfImagesToTrain);
+    trainerPositive.setRequiredSize(posSize);
+    trainerPositive.setRoiRect(mRoiRect);
+
+
     //Preparing negative trainer
     Trainer trainerNegative(pr::NEGATIVE);
-    trainerPositive.setTrainingMethod(mMethod);
-    mNegativeFilesList = generateFileList(pr::NEGATIVE);
+    trainerNegative.setTrainingMethod(mMethod);
     trainerNegative.setFileList(&mNegativeFilesList);
     trainerNegative.setFilters(a, b, c);
     trainerNegative.setNumToTrain(mNumberOfImagesToTrain);
     trainerNegative.setSizeMode(mSizeMode);
     trainerNegative.setRequiredSize(posSize);
+    trainerNegative.setRoiRect(mRoiRect);
 
     //Start work
     //TODO do this on 2 thread
@@ -70,11 +76,19 @@ bool Manager::start()
     pr::training_vector negResult = trainerNegative.performTraining();
 
     //calculate mean and variance for baysian
-    //TODO all are Bayesian...options should be GRAYSCALE and HOG
+
+    //TODO this if statement is redundand....mMethod is enough! lol :D :P
     if(mMethod == pr::GRAYSCALE) {   /**     GRAYSCALE       **/
 
         BayesianClassifier bcp("positive", mMethod);
-        bcp.setSize(posSize);
+        if(trainerPositive.getShouldCrop()) {
+            bcp.setSize(cv::Size(trainerPositive.getCvRect().width
+                                , trainerPositive.getCvRect().height));
+            bcp.setShouldCrop(trainerPositive.getShouldCrop());
+            bcp.setRoi(trainerPositive.getCvRect());
+        } else {
+            bcp.setSize(posSize);
+        }
         bcp.setType(posType);
         bcp.performCalculations(posResult);
         mTestFilesList = generateTestFileList();
@@ -87,7 +101,14 @@ bool Manager::start()
     } else if (mMethod == pr::HOG) { /**    HOG     **/
 
         BayesianClassifier bcp("positive", mMethod);
-        bcp.setSize(posSize);
+        if(trainerPositive.getShouldCrop()) {
+            bcp.setSize(cv::Size(trainerPositive.getCvRect().width
+                                , trainerPositive.getCvRect().height));
+            bcp.setShouldCrop(trainerPositive.getShouldCrop());
+            bcp.setRoi(trainerPositive.getCvRect());
+        } else {
+            bcp.setSize(posSize);
+        }
         bcp.setType(posType);
         bcp.performCalculations(posResult);
         mTestFilesList = generateTestFileList();
@@ -281,6 +302,19 @@ void Manager::setSizeMode(int mode)
 void Manager::setOutputFileName(QString name)
 {
     mProjectName = name;
+}
+
+pr::RoiRect Manager::roiRect() const
+{
+    return mRoiRect;
+}
+
+void Manager::setRoiRect(QString l, QString t, QString r, QString b)
+{
+    mRoiRect.left = l.toInt();
+    mRoiRect.top = t.toInt();
+    mRoiRect.right = r.toInt();
+    mRoiRect.bottom = b.toInt();
 }
 
 
