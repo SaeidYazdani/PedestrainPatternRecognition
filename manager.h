@@ -69,10 +69,10 @@ private:
     QStringList mTestFilesList;
 
     //options
-    pr::TrainingFilters mFilters;
-    pr::TrainingMethod mMethod;
-    pr::SizeMode mSizeMode;
-    int mNumberOfImagesToTrain;
+    pr::TrainingFilters mFilters = pr::NONE;
+    pr::TrainingMethod mMethod = pr::GRAYSCALE;
+    pr::SizeMode mSizeMode = pr::RESIZE;
+    int mNumberOfImagesToTrain = 0;
     bool mArffGeneration = false;
     pr::RoiRect mRoiRect;
 

@@ -24,7 +24,7 @@ bool Manager::start()
     mState = pr::WORKING;
 
     //Prepareing filters from enum flag
-    bool a,b,c;
+    bool a = false; bool b = false; bool c = false;
 
     if(mFilters & pr::GAUSS)
         a = true;
