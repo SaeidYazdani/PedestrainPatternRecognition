@@ -95,7 +95,7 @@ void gaussFilter(cv::Mat *src, cv::Mat *dst, cv::Size kernelSize) {
 bool saveResultVectorAsCVS(result_vector *rv, QString path, QString name
                            , bool writeFullPath) {
 
-    QFile file(path.append(QDir::separator()).append(name).append(".cvs"));
+    QFile file(path.append(QDir::separator()).append(name).append(".csv"));
 
     file.open(QIODevice::WriteOnly | QIODevice::Truncate);
 

@@ -73,7 +73,13 @@ bool Manager::start()
     //Start work
     //TODO do this on 2 thread
     pr::training_vector posResult = trainerPositive.performTraining();
-    pr::training_vector negResult = trainerNegative.performTraining();
+    //we do negative for now only if ARFF generation is set to true
+    pr::training_vector negResult;
+    if(mArffGeneration) {
+        negResult = trainerNegative.performTraining();
+    } else {
+        negResult = pr::training_vector(0);
+    }
 
     //calculate mean and variance for baysian
 
@@ -81,11 +87,13 @@ bool Manager::start()
     if(mMethod == pr::GRAYSCALE) {   /**     GRAYSCALE       **/
 
         BayesianClassifier bcp("positive", mMethod);
+        bcp.setFilterGauss(a);
         if(trainerPositive.getShouldCrop()) {
             bcp.setSize(cv::Size(trainerPositive.getCvRect().width
-                                , trainerPositive.getCvRect().height));
+                                 , trainerPositive.getCvRect().height));
             bcp.setShouldCrop(trainerPositive.getShouldCrop());
             bcp.setRoi(trainerPositive.getCvRect());
+
         } else {
             bcp.setSize(posSize);
         }
@@ -101,9 +109,10 @@ bool Manager::start()
     } else if (mMethod == pr::HOG) { /**    HOG     **/
 
         BayesianClassifier bcp("positive", mMethod);
+        bcp.setFilterGauss(a);
         if(trainerPositive.getShouldCrop()) {
             bcp.setSize(cv::Size(trainerPositive.getCvRect().width
-                                , trainerPositive.getCvRect().height));
+                                 , trainerPositive.getCvRect().height));
             bcp.setShouldCrop(trainerPositive.getShouldCrop());
             bcp.setRoi(trainerPositive.getCvRect());
         } else {
@@ -120,20 +129,28 @@ bool Manager::start()
 
     }
 
-    //FIXME arff generator is disabled for test! enable it later
-    //Generate the ARFF file
-    //    ArffGenerator ag;
-    //    ag.setImageSize(posSize);
-    //    ag.setPosVector(&posResult);
-    //    ag.setNegVector(&negResult);
-    //    ag.setPath(mOutputPath.toLocalFile());
-    //    ag.setProjectName(mProjectName);
-    //    bool result = ag.generateArff(pr::FileType::COMPLETE);
-    //    result = result & ag.generateArff(pr::FileType::POSITIVE_ONLY);
-    //    result = result & ag.generateArff(pr::FileType::NEGATIVE_ONLY);
-    //    if(!result) {
-    //        qDebug() << "Could not generate ARFF file";
-    //    }
+    //Generate ARFF file
+    if(mArffGeneration) {
+        qDebug() << "Performing ARFF generation...";
+        ArffGenerator ag;
+
+        if(trainerPositive.getShouldCrop()) {
+            ag.setImageSize(cv::Size(trainerPositive.getCvRect().width
+                                     , trainerPositive.getCvRect().height));
+        } else {
+            ag.setImageSize(posSize);
+        }
+        ag.setPosVector(&posResult);
+        ag.setNegVector(&negResult);
+        ag.setPath(mOutputPath.toLocalFile());
+        ag.setProjectName(mProjectName);
+        bool result = ag.generateArff(pr::FileType::COMPLETE);
+        result = result & ag.generateArff(pr::FileType::POSITIVE_ONLY);
+        result = result & ag.generateArff(pr::FileType::NEGATIVE_ONLY);
+        if(!result) {
+            qDebug() << "Could not generate ARFF file";
+        }
+    }
 
     mState = pr::IDLE;
 
@@ -315,6 +332,11 @@ void Manager::setRoiRect(QString l, QString t, QString r, QString b)
     mRoiRect.top = t.toInt();
     mRoiRect.right = r.toInt();
     mRoiRect.bottom = b.toInt();
+}
+
+void Manager::setArffGeneration(bool what)
+{
+    mArffGeneration = what;
 }
 
 

@@ -37,8 +37,10 @@ signals:
 
 
 public slots:
+    //actions
     bool start();
     void stop();
+    //options
     bool checkDataFolder(QUrl posPath, int whichFolder);
     bool checkOutputFolder(QUrl outPath);
     void setNumberOfImagesToTrain(QString num);
@@ -47,7 +49,7 @@ public slots:
     void setSizeMode(int mode);
     void setOutputFileName(QString name);
     void setRoiRect(QString l, QString t, QString r, QString b);
-
+    void setArffGeneration(bool what);
 
 private:
 
@@ -71,6 +73,7 @@ private:
     pr::TrainingMethod mMethod;
     pr::SizeMode mSizeMode;
     int mNumberOfImagesToTrain;
+    bool mArffGeneration = false;
     pr::RoiRect mRoiRect;
 
     //functions

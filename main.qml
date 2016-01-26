@@ -422,6 +422,8 @@ Window {
                                 maximumLength: 128;
                                 text: qsTr("pedestrain");
                             }
+
+                            CheckBox { id: cbArffGeneration;}
                         }
 
                         Rectangle {
@@ -472,6 +474,7 @@ Window {
                                                          ,tfRoiTop.text.trim()
                                                          ,tfRoiRight.text.trim()
                                                          ,tfRoiBottom.text.trim());
+                                     cpManager.setArffGeneration(cbArffGeneration.checked);
 
 
 

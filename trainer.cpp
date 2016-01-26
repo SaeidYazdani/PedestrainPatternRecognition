@@ -174,7 +174,10 @@ pr::pixel_vector Trainer::getGrayscaleFeature(QString file)
     }
 
     if(mFilterGauss) {
-        //do gauss
+        //pr::showSingleImage(file + " BEFORE GAUSS", mat);
+        cv::GaussianBlur(mat,mat,cv::Size(3,3),1.1);
+        //pr::showSingleImage(file + " AFTER GAUSS", mat);
+        //cv::waitKey(0);
     }
 
     //NOTE: We do not do SOBEL for grayscale feature vector
@@ -230,6 +233,13 @@ pr::pixel_vector Trainer::getHogFeature(QString file)
     if(mShouldCrop) { //crop if neededz
         cv::Mat cropped = mat(mCvRect);
         mat = cv::Mat(cropped);
+    }
+
+    if(mFilterGauss) {
+        //pr::showSingleImage(file + " BEFORE GAUSS", mat);
+        cv::GaussianBlur(mat,mat,cv::Size(3,3),1.1);
+        //pr::showSingleImage(file + " AFTER GAUSS", mat);
+        //cv::waitKey(0);
     }
 
     int rows = mat.rows;

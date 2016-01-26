@@ -38,6 +38,9 @@ public:
     cv::Rect roi() const;
     void setRoi(const cv::Rect &roi);
 
+    bool filterGauss() const;
+    void setFilterGauss(bool filterGauss);
+
 private:
 
     QString mClassName;
@@ -50,7 +53,8 @@ private:
     int mType;
 
     cv::Rect mRoi;
-    bool mShouldCrop;
+    bool mShouldCrop = false;
+    bool mFilterGauss = false;
 
     cv::Mat mData;
     cv::Mat mMean;

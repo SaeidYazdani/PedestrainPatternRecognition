@@ -122,7 +122,7 @@ private:
     QStringList *mFileList;
 
     int mNumToTrain;
-    bool mFilterGauss, mFilterSobel, mFilterFeature;
+    bool mFilterGauss = false, mFilterSobel = false, mFilterFeature = false;
     pr::RoiRect mRoiRect;
     cv::Rect mCvRect;
     cv::Size mRequiredSize;

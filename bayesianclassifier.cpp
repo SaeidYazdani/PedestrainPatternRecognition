@@ -58,6 +58,16 @@ void BayesianClassifier::setRoi(const cv::Rect &roi)
     mRoi = roi;
 }
 
+bool BayesianClassifier::filterGauss() const
+{
+    return mFilterGauss;
+}
+
+void BayesianClassifier::setFilterGauss(bool filterGauss)
+{
+    mFilterGauss = filterGauss;
+}
+
 
 
 void BayesianClassifier::performCalculations(pr::training_vector tv)
@@ -116,6 +126,7 @@ void BayesianClassifier::performCalculations(pr::training_vector tv)
 
         //SHOW COVAR as image
         cv::Mat covarNorm;
+        cout << "Size of Covariance Matrix " << covar.size() << endl;
         cv::normalize(mCovariance, covarNorm, 0, 255, NORM_MINMAX, CV_8UC1);
         pr::showSingleImage(mClassName +  " => NORMALIZED [0,255] COVARIANCE OF SAMPLES", covarNorm);
     }
@@ -167,13 +178,24 @@ pr::TestResult BayesianClassifier::isPositiveHog(QString file) {
     cv::Mat mat = cv::imread(file.toStdString(), CV_LOAD_IMAGE_ANYDEPTH
                              | CV_LOAD_IMAGE_ANYCOLOR);
 
+    if(mShouldCrop) {
+        cv::Mat cropped = mat(mRoi);
+        mat = cv::Mat(cropped);
+    }
+
+    if(mFilterGauss) {
+        //pr::showSingleImage(file + " BEFORE GAUSS", mat);
+        cv::GaussianBlur(mat, mat, cv::Size(3,3),1.1);
+        //pr::showSingleImage(file + " AFTER GAUSS", mat);
+        //cv::waitKey(0);
+    }
+
     int rows = mat.rows;
     int cols = mat.cols;
 
     //perform X and Y sobel
     cv::Mat dstX = cv::Mat(rows, cols, CV_32FC1);
     cv::Mat dstY = cv::Mat(rows, cols, CV_32FC1);
-
 
     cv::Mat matFlaot; //TODO do directly to reduce memory footprint
     mat.convertTo(matFlaot, CV_32FC1);
@@ -265,20 +287,9 @@ pr::TestResult BayesianClassifier::isPositiveHog(QString file) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 //TODO this does not work with bigger images!!!
+//TODO vectors for test can be calculated with trainer.cpp ...we are doing
+//redundant stuff here....
 pr::TestResult BayesianClassifier::isPositiveGrayScale(QString file)
 {
     cv::Mat sample = cv::imread(file.toStdString(), CV_LOAD_IMAGE_ANYDEPTH
@@ -288,6 +299,13 @@ pr::TestResult BayesianClassifier::isPositiveGrayScale(QString file)
     if(mShouldCrop) {
         cv::Mat cropped = sample(mRoi);
         sample = cv::Mat(cropped);
+    }
+
+    if(mFilterGauss) {
+        //pr::showSingleImage(file + " BEFORE GAUSS", mat);
+        cv::GaussianBlur(sample,sample,cv::Size(3,3),1.1);
+        //pr::showSingleImage(file + " AFTER GAUSS", mat);
+        //cv::waitKey(0);
     }
 
     //convert sample to a single row Mat

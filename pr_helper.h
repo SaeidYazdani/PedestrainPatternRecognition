@@ -21,8 +21,9 @@
 #define PI_BY_2 1.57079632679
 
 //FOR HOG
-#define HOG_CHANNEL 72 //72
-#define HOG_BEAN    5  //5
+//the best values are 36x10 or 20x18
+#define HOG_CHANNEL 20//36 //72
+#define HOG_BEAN    18//10  //5
 
 
 /**
